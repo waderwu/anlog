@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core import serializers
 from .models import Log
 import requests as rq
 import json
@@ -26,6 +27,22 @@ def update(requests):
         ip = jlog['ip']
         time = datetime.strptime(jlog['time'], "%Y-%m-%d %H:%M:%S")
         method = jlog['method'].lower()
-        log = Log(attackip=ip, attacktime=time, method=method, uri=jlog['uri'], headers=jlog['headers'], data=jlog['data'])
+        response = jlog['response']
+        log = Log(attackip=ip, attacktime=time, method=method, uri=jlog['uri'], headers=jlog['headers'], data=jlog['data'], response=response)
         log.save()
     return HttpResponse("ok")
+
+
+def replay(requests):
+    logid = requests.GET['id']
+    log = Log.objects.get(pk=logid)
+    return HttpResponse(log.replay())
+
+
+def show(requests):
+    d = Log.objects.all()[:2]
+
+    js = serializers.serialize("json", d)
+
+    print(js)
+    return HttpResponse("tmp")

@@ -11,19 +11,21 @@ class Log(models.Model):
     uri = models.TextField()
     headers = models.TextField()
     data = models.TextField()
+    response = models.TextField()
 
     def attacktype(self):
         return "rce"
 
     def replay(self):
         uri = self.uri
-        headers = json.loads(self.headers)
+        headers = self.headers.replace("'", '"')
+        headers = json.loads(headers)
         data = self.data
-        host = headers['host']
+        host = headers['Host']
         headers = str(headers)
         method = self.method
 
-        with open("replay", "r") as f:
+        with open("./log/replay", "r") as f:
             script = f.read()
 
         script = script.replace("{uri}", uri)
