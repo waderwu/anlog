@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.core import serializers
+from django.db.models import Q
 from .models import Log
 import requests as rq
 import json
@@ -40,9 +41,47 @@ def replay(requests):
 
 
 def show(requests):
-    d = Log.objects.all()[:2]
+    logs = Log.objects.all()
 
-    js = serializers.serialize("json", d)
+    jslogs = serializers.serialize("json", logs)
+    return HttpResponse(jslogs, content_type="application/json")
 
-    print(js)
-    return HttpResponse("tmp")
+
+def search(requests):
+    keyword = requests.GET['keyword']
+
+    retjs = {}
+
+    datalogs = Log.objects.filter(data__iregex=keyword)
+    retjs['data'] = serializers.serialize("json", datalogs)
+
+    headerslogs = Log.objects.filter(headers__iregex=keyword)
+    retjs['headers'] = serializers.serialize("json", headerslogs)
+
+    urilogs = Log.objects.filter(headers__iregex=keyword)
+    retjs['uri'] = serializers.serialize("json", urilogs)
+
+    urilogs = Log.objects.filter(uri__iregex=keyword)
+    retjs['uri'] = serializers.serialize("json", urilogs)
+
+    reslogs = Log.objects.filter(response__iregex=keyword)
+    retjs['response'] = serializers.serialize("json", reslogs)
+
+    return JsonResponse(retjs)
+
+
+def filter(requests):
+    logs = None
+    if 'ip' in requests.GET:
+        ip = requests.GET['ip']
+        logs = Log.objects.filter(attackip=ip)
+    elif "uri" in requests.GET:
+        uri = requests.GET['uri']
+        logs = Log.objects.filter(uri__iregex=uri)
+
+    retlogs = serializers.serialize("json", logs)
+    return HttpResponse(retlogs, content_type="application/json")
+
+
+def statistics(requests):
+    pass
