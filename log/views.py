@@ -19,7 +19,7 @@ def login(requests):
 
 
 def update(requests):
-    url = "http://192.168.197.131/logser.php"
+    url = "http://192.168.197.132/logser.php"
     r = rq.get(url)
     jsonr = json.loads(r.text)
     print(jsonr)
@@ -29,7 +29,7 @@ def update(requests):
         time = datetime.strptime(jlog['time'], "%Y-%m-%d %H:%M:%S")
         method = jlog['method'].lower()
         response = jlog['response']
-        log = Log(attackip=ip, attacktime=time, method=method, uri=jlog['uri'], headers=jlog['headers'], data=jlog['data'], response=response)
+        log = Log(attackip=ip, attacktime=time, method=method, path=jlog['path'], headers=jlog['headers'], post=jlog['post'], get=jlog['get'], response=response)
         log.save()
     return HttpResponse("ok")
 

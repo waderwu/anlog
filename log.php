@@ -1,31 +1,32 @@
 <?php
 class Log
 {
-    private $uri, $method, $headers, $data, $ip, $time, $log;
+    private $path, $method, $headers, $data, $get, $ip, $time, $response, $log;
     function __construct()
     {
         $this->dir = "/tmp/log/";
-        $this->uri =$_SERVER['REQUEST_URI'];
+        $this->path =$_SERVER['PHP_SELF'];
         $this->method = $_SERVER['REQUEST_METHOD'];
         $this->headers = $this->get_headers();
-        $this->data = file_get_contents("php://input");
+        $this->post = $_POST;
+        $this->get = $_GET;
         $this->ip = $this->get_ip();
         $this->time = $this->get_date();
         $this->log = array();
-        $this->log['uri'] = $this->uri;
+        $this->log['path'] = $this->path;
         $this->log['method'] = $this->method;
         $this->log['headers'] = $this->headers;
-        $this->log['data'] = $this->data;
+        $this->log['post'] = $this->post;
+        $this->log['get'] = $this->get;
         $this->log['ip'] = $this->ip;
         $this->log['time'] = $this->time;
-        $logjson = json_encode($this->log);
-        $filename = $this->gen_randstr();
+
         if (!is_dir($this->dir))
         {
             mkdir($this->dir,0755);
         }
 
-        file_put_contents($this->dir.$filename.date('H_i_s',time()), $logjson, FILE_APPEND);
+        ob_start(array($this,"get_response"));
     }
 
     function gen_randstr()
@@ -70,6 +71,18 @@ class Log
     function get_ip()
     {
         return $_SERVER["REMOTE_ADDR"];
+    }
+
+    function get_response($response)
+    {
+        $this->response = $response;
+        $this->log['response'] = $this->response;
+
+        $logjson = json_encode($this->log);
+        $filename = $this->gen_randstr();
+        file_put_contents($this->dir.$filename.date('H_i_s',time()), $logjson, FILE_APPEND);
+
+        return $response;
     }
 }
 

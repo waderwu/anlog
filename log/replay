@@ -1,18 +1,15 @@
 import requests
 
-def replay():
-    url = "http://{host}{uri}"
-    headers = {}
-    headers["Content-Type"] = "application/x-www-form-urlencoded"
-    tmp = {headers}
-    for key in tmp:
-        headers[key] = tmp[key]
+def replay(host):
+    url = "http://%s{path}"%host
+    headers = {headers}
 
-    data = """{data}"""
-    r = requests.{method}(url, data=data, headers=headers, timeout=5)
+    data = {data}
+    params = {params}
+    r = requests.{method}(url, data=data, params=params, headers=headers, timeout=5)
 
     return r.text
 
 
 if __name__ == "__main__":
-    print(replay())
+    print(replay("127.0.0.1"))
