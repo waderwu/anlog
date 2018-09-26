@@ -52,17 +52,17 @@ def search(requests):
 
     retjs = {}
 
-    datalogs = Log.objects.filter(data__iregex=keyword)
-    retjs['data'] = serializers.serialize("json", datalogs)
+    postlogs = Log.objects.filter(post__iregex=keyword)
+    retjs['post'] = serializers.serialize("json", postlogs)
 
     headerslogs = Log.objects.filter(headers__iregex=keyword)
     retjs['headers'] = serializers.serialize("json", headerslogs)
 
-    urilogs = Log.objects.filter(headers__iregex=keyword)
-    retjs['uri'] = serializers.serialize("json", urilogs)
+    pathlogs = Log.objects.filter(path__iregex=keyword)
+    retjs['path'] = serializers.serialize("json", pathlogs)
 
-    urilogs = Log.objects.filter(uri__iregex=keyword)
-    retjs['uri'] = serializers.serialize("json", urilogs)
+    getlogs = Log.objects.filter(get__iregex=keyword)
+    retjs['get'] = serializers.serialize("json", getlogs)
 
     reslogs = Log.objects.filter(response__iregex=keyword)
     retjs['response'] = serializers.serialize("json", reslogs)
@@ -75,9 +75,9 @@ def filter(requests):
     if 'ip' in requests.GET:
         ip = requests.GET['ip']
         logs = Log.objects.filter(attackip=ip)
-    elif "uri" in requests.GET:
-        uri = requests.GET['uri']
-        logs = Log.objects.filter(uri__iregex=uri)
+    elif "path" in requests.GET:
+        path = requests.GET['path']
+        logs = Log.objects.filter(path__iregex=path)
 
     retlogs = serializers.serialize("json", logs)
     return HttpResponse(retlogs, content_type="application/json")
