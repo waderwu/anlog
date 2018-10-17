@@ -146,9 +146,9 @@ def filter(requests):
     if 'ip' in requests.GET:
         ip = requests.GET['ip']
         logs = Log.objects.filter(attackip=ip)
-    elif "uri" in requests.GET:
-        uri = requests.GET['uri']
-        logs = Log.objects.filter(uri__iregex=uri)
+    elif "path" in requests.GET:
+        path = requests.GET['path']
+        logs = Log.objects.filter(path__iregex=path)
 
     retlogs = serializers.serialize("json", logs)
     return HttpResponse(retlogs, content_type="application/json")
