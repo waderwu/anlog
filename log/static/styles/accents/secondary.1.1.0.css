@@ -197,10 +197,17 @@ pre {
   max-height: 340px; }
 
 .table {
-  background-color: transparent; }
+  background-color:transparent;
+  width:100%;
+  table-layout:fixed;
+}
   .table th,
   .table td {
-    padding: 0.75rem; }
+    padding: 0.75rem;
+    white-space:nowrap;
+    overflow:visible;
+    word-break:break-all;
+  }
   .table .table {
     background-color: #fff; }
 

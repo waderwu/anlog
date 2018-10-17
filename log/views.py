@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
+# from django.utils.safestring import mark_safe
 from .models import Log
 import requests as rq
 import json
@@ -13,7 +14,7 @@ from datetime import datetime
 
 def index(requests):
     log_list = Log.objects.all()
-    paginator = Paginator(log_list, 1)
+    paginator = Paginator(log_list, 3)
 
     page = requests.GET.get('page')
     try:
@@ -43,6 +44,7 @@ def index(requests):
         item['post'] = log.post
         item['get'] = log.get
         item['response'] = log.response
+        # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
     return render(requests, "index.html", {'contents': dicts, 'page_info': page_info})
@@ -84,24 +86,59 @@ def show(requests):
 def search(requests):
     keyword = requests.GET['keyword']
 
-    retjs = {}
+    # retjs = {}
 
-    datalogs = Log.objects.filter(data__iregex=keyword)
-    retjs['data'] = serializers.serialize("json", datalogs)
+    log_list = Log.objects.filter(Q(attackip__iregex=keyword)|Q(headers__iregex=keyword)|Q(post__iregex=keyword)|Q(get__iregex=keyword)|Q(response__iregex=keyword))
+    # retjs['attackip'] = serializers.serialize("json", attackiplogs)
+    #
+    # headerslogs = Log.objects.filter(headers__iregex=keyword)
+    # retjs['headers'] = serializers.serialize("json", headerslogs)
+    #
+    # postlogs = Log.objects.filter(post__iregex=keyword)
+    # retjs['post'] = serializers.serialize("json", postlogs)
+    #
+    # getlogs = Log.objects.filter(get__iregex=keyword)
+    # retjs['get'] = serializers.serialize("json", getlogs)
+    #
+    # reslogs = Log.objects.filter(response__iregex=keyword)
+    # retjs['response'] = serializers.serialize("json", reslogs)
 
-    headerslogs = Log.objects.filter(headers__iregex=keyword)
-    retjs['headers'] = serializers.serialize("json", headerslogs)
+    # print(JsonResponse(retjs))
+    # return JsonResponse(retjs)
+    paginator = Paginator(log_list, 3)
 
-    urilogs = Log.objects.filter(headers__iregex=keyword)
-    retjs['uri'] = serializers.serialize("json", urilogs)
+    page = requests.GET.get('page')
+    try:
+        logs = paginator.page(page)
+    except PageNotAnInteger:
+        logs = paginator.page(1)
+    except EmptyPage:
+        logs = paginator.page(paginator.num_pages)
 
-    urilogs = Log.objects.filter(uri__iregex=keyword)
-    retjs['uri'] = serializers.serialize("json", urilogs)
+    page_info = {}
+    page_info['has_previous'] = logs.has_previous
+    page_info['previous_page_number'] = logs.previous_page_number
+    page_info['number'] = logs.number
+    page_info['num_pages'] = logs.paginator.num_pages
+    page_info['has_next'] = logs.has_next
+    page_info['next_page_number'] = logs.next_page_number
 
-    reslogs = Log.objects.filter(response__iregex=keyword)
-    retjs['response'] = serializers.serialize("json", reslogs)
+    dicts = []
+    for i, log in enumerate(logs):
+        item = {}
+        item['index'] = i+1
+        item['attackip'] = log.attackip
+        item['attacktime'] = log.attacktime
+        item['method'] = log.method
+        item['path'] = log.path
+        item['headers'] = log.headers
+        item['post'] = log.post
+        item['get'] = log.get
+        item['response'] = log.response
+        # item['pageHtml'] = mark_safe(log.response)
+        dicts.append(item)
 
-    return JsonResponse(retjs)
+    return render(requests, "index.html", {'contents': dicts, 'page_info': page_info})
 
 
 def filter(requests):

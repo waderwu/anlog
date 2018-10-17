@@ -3,27 +3,28 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Shards Dashboard Lite - Free Bootstrap Admin Template – DesignRevision</title>
+    <title>Anlog - Web Log Analyser</title>
     <meta name="description" content="A high-quality &amp; free Bootstrap admin dashboard template pack that comes with lots of templates and components.">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
+{#    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">#}
     {% load static from staticfiles %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="stylesheet" id="main-stylesheet" data-version="1.1.0" href="{% static "styles/shards-dashboards.1.1.0.min.css" %}">
+    <link rel="stylesheet" id="main-stylesheet" data-version="1.1.0" href="{% static "styles/shards-dashboards.1.1.0.css" %}">
+    <link rel="stylesheet" href="{% static "styles/bootstrap-table-expandable.css" %}">
     <link rel="stylesheet" href="{% static "styles/extras.1.1.0.min.css" %}">
     <script async defer src="{% static "scripts/buttons.js" %}"></script>
     <script type="text/javascript">
-        function showDetails(index){
-            if(document.getElementById("details"+index).style.display==='none'){
-                document.getElementById("details"+index).style.display='table-row';
+        function showRender(index){
+            if(document.getElementById("render"+index).style.display==='none'){
+                document.getElementById("render"+index).style.display='block';
             }else{
-                document.getElementById("details"+index).style.display='none';
+                document.getElementById("render"+index).style.display='none';
             }
         }
- </script>
+    </script>
   </head>
   <body class="h-100">
     <div class="color-switcher-toggle animated pulse infinite">
@@ -46,14 +47,17 @@
               </a>
             </nav>
           </div>
-          <form action="#" class="main-sidebar__search w-100 border-right d-sm-flex d-md-none d-lg-none">
-            <div class="input-group input-group-seamless ml-3">
+          <form action="/log/search/" method="get" class="main-sidebar__search w-100 border-right d-sm-flex d-md-none d-lg-none">
+              {% csrf_token %}
+              <div class="input-group input-group-seamless ml-3">
               <div class="input-group-prepend">
                 <div class="input-group-text">
                   <i class="fas fa-search"></i>
                 </div>
               </div>
-              <input class="navbar-search form-control" type="text" placeholder="Search for something..." aria-label="Search"> </div>
+              <input class="navbar-search form-control" type="text" placeholder="Search for something..." aria-label="Search">
+               <button type="submit">搜索</button>
+              </div>
           </form>
           <div class="nav-wrapper">
             <ul class="nav flex-column">
@@ -101,74 +105,77 @@
           <div class="main-navbar sticky-top bg-white">
             <!-- Main Navbar -->
             <nav class="navbar align-items-stretch navbar-light flex-md-nowrap p-0">
-              <form action="#" class="main-navbar__search w-100 d-none d-md-flex d-lg-flex">
+              <form action="/log/search/" method="get" class="main-navbar__search w-100 d-none d-md-flex d-lg-flex">
                 <div class="input-group input-group-seamless ml-3">
                   <div class="input-group-prepend">
                     <div class="input-group-text">
                       <i class="fas fa-search"></i>
                     </div>
                   </div>
-                  <input class="navbar-search form-control" type="text" placeholder="Search for something..." aria-label="Search"> </div>
+                  <input class="navbar-search form-control" type="text" name="keyword" placeholder="Search for something..." aria-label="Search">
+                  <input type="submit" class="navbar-btn" value="Search">
+                </div>
               </form>
-              <ul class="navbar-nav border-left flex-row ">
-                <li class="nav-item border-right dropdown notifications">
-                  <a class="nav-link nav-link-icon text-center" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <div class="nav-link-icon__wrapper">
-                      <i class="material-icons">&#xE7F4;</i>
-                      <span class="badge badge-pill badge-danger">2</span>
-                    </div>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-small" aria-labelledby="dropdownMenuLink">
-                    <a class="dropdown-item" href="#">
-                      <div class="notification__icon-wrapper">
-                        <div class="notification__icon">
-                          <i class="material-icons">&#xE6E1;</i>
-                        </div>
-                      </div>
-                      <div class="notification__content">
-                        <span class="notification__category">Analytics</span>
-                        <p>Your website’s active users count increased by
-                          <span class="text-success text-semibold">28%</span> in the last week. Great job!</p>
-                      </div>
-                    </a>
-                    <a class="dropdown-item" href="#">
-                      <div class="notification__icon-wrapper">
-                        <div class="notification__icon">
-                          <i class="material-icons">&#xE8D1;</i>
-                        </div>
-                      </div>
-                      <div class="notification__content">
-                        <span class="notification__category">Sales</span>
-                        <p>Last week your store’s sales count decreased by
-                          <span class="text-danger text-semibold">5.52%</span>. It could have been worse!</p>
-                      </div>
-                    </a>
-                    <a class="dropdown-item notification__all text-center" href="#"> View all Notifications </a>
-                  </div>
-                </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle text-nowrap px-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                    <img class="user-avatar rounded-circle mr-2" src="{% static "images/avatars/0.jpg" %}" alt="User Avatar">
-                    <span class="d-none d-md-inline-block">Sierra Brooks</span>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-small">
-                    <a class="dropdown-item" href="user-profile-lite.html">
-                      <i class="material-icons">&#xE7FD;</i> Profile</a>
-                    <a class="dropdown-item" href="components-blog-posts.html">
-                      <i class="material-icons">vertical_split</i> Blog Posts</a>
-                    <a class="dropdown-item" href="add-new-post.html">
-                      <i class="material-icons">note_add</i> Add New Post</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger" href="#">
-                      <i class="material-icons text-danger">&#xE879;</i> Logout </a>
-                  </div>
-                </li>
-              </ul>
-              <nav class="nav">
-                <a href="#" class="nav-link nav-link-icon toggle-sidebar d-md-inline d-lg-none text-center border-left" data-toggle="collapse" data-target=".header-navbar" aria-expanded="false" aria-controls="header-navbar">
-                  <i class="material-icons">&#xE5D2;</i>
-                </a>
-              </nav>
+{#              <ul class="navbar-nav border-left flex-row ">#}
+{#                <li class="nav-item border-right dropdown notifications">#}
+{#                  <a class="nav-link nav-link-icon text-center" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">#}
+{#                    <div class="nav-link-icon__wrapper">#}
+{#                    <div class="nav-link-icon__wrapper">#}
+{#                      <i class="material-icons">&#xE7F4;</i>#}
+{#                      <span class="badge badge-pill badge-danger">2</span>#}
+{#                    </div>#}
+{#                  </a>#}
+{#                  <div class="dropdown-menu dropdown-menu-small" aria-labelledby="dropdownMenuLink">#}
+{#                    <a class="dropdown-item" href="#">#}
+{#                      <div class="notification__icon-wrapper">#}
+{#                        <div class="notification__icon">#}
+{#                          <i class="material-icons">&#xE6E1;</i>#}
+{#                        </div>#}
+{#                      </div>#}
+{#                      <div class="notification__content">#}
+{#                        <span class="notification__category">Analytics</span>#}
+{#                        <p>Your website’s active users count increased by#}
+{#                          <span class="text-success text-semibold">28%</span> in the last week. Great job!</p>#}
+{#                      </div>#}
+{#                    </a>#}
+{#                    <a class="dropdown-item" href="#">#}
+{#                      <div class="notification__icon-wrapper">#}
+{#                        <div class="notification__icon">#}
+{#                          <i class="material-icons">&#xE8D1;</i>#}
+{#                        </div>#}
+{#                      </div>#}
+{#                      <div class="notification__content">#}
+{#                        <span class="notification__category">Sales</span>#}
+{#                        <p>Last week your store’s sales count decreased by#}
+{#                          <span class="text-danger text-semibold">5.52%</span>. It could have been worse!</p>#}
+{#                      </div>#}
+{#                    </a>#}
+{#                    <a class="dropdown-item notification__all text-center" href="#"> View all Notifications </a>#}
+{#                  </div>#}
+{#                </li>#}
+{#                <li class="nav-item dropdown">#}
+{#                  <a class="nav-link dropdown-toggle text-nowrap px-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">#}
+{#                    <img class="user-avatar rounded-circle mr-2" src="{% static "images/avatars/0.jpg" %}" alt="User Avatar">#}
+{#                    <span class="d-none d-md-inline-block">Sierra Brooks</span>#}
+{#                  </a>#}
+{#                  <div class="dropdown-menu dropdown-menu-small">#}
+{#                    <a class="dropdown-item" href="user-profile-lite.html">#}
+{#                      <i class="material-icons">&#xE7FD;</i> Profile</a>#}
+{#                    <a class="dropdown-item" href="components-blog-posts.html">#}
+{#                      <i class="material-icons">vertical_split</i> Blog Posts</a>#}
+{#                    <a class="dropdown-item" href="add-new-post.html">#}
+{#                      <i class="material-icons">note_add</i> Add New Post</a>#}
+{#                    <div class="dropdown-divider"></div>#}
+{#                    <a class="dropdown-item text-danger" href="#">#}
+{#                      <i class="material-icons text-danger">&#xE879;</i> Logout </a>#}
+{#                  </div>#}
+{#                </li>#}
+{#              </ul>#}
+{#              <nav class="nav">#}
+{#                <a href="#" class="nav-link nav-link-icon toggle-sidebar d-md-inline d-lg-none text-center border-left" data-toggle="collapse" data-target=".header-navbar" aria-expanded="false" aria-controls="header-navbar">#}
+{#                  <i class="material-icons">&#xE5D2;</i>#}
+{#                </a>#}
+{#              </nav>#}
             </nav>
           </div>
           <!-- / .main-navbar -->
@@ -189,45 +196,59 @@
                       <h5 class="m-0">Log Data</h5>
                   </div>
                   <div class="card-body p-0 pb-3 text-center">
-                    <table class="table mb-0" cellpadding="2px">
-                      <thead class="bg-light">
-                        <tr>
-                          <th scope="col" class="border-0">Index</th>
-                          <th scope="col" class="border-0">Time</th>
-                          <th scope="col" class="border-0">IP</th>
-                          <th scope="col" class="border-0">Method</th>
-                          <th scope="col" class="border-0">Path</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {% for item in contents %}
-                        <tr onclick="showDetails({{ item.index }})">
-                          <td>{{ item.index }}</td>
-                          <td>{{ item.attacktime }}</td>
-                          <td>{{ item.attackip }}</td>
-                          <td style="text-transform:uppercase;">{{ item.method }}</td>
-                          <td>{{ item.path }}</td>
-                        </tr>
-                        <tr id="details{{ item.index }}" style="display:none;">
-                          <td colspan="5" height="50" class="bg-dark">
-                              <div class="text-left" style="overflow-y:auto; height:200px">
-                                  <strong>POST:</strong><br>
-                                  {% ifnotequal item.post '[]' %}
-                                      {{ item.post }}<br>
-                                  {% endifnotequal %}
-                                  <strong>GET:</strong><br>
-                                  {% ifnotequal item.get '[]' %}
-                                      {{ item.get }}<br>
-                                  {% endifnotequal %}
-                                  <strong>RESPONSE:</strong><br>
-                                  {% ifnotequal item.response '[]' %}
-                                      {{ item.response }}<br>
-                                  {% endifnotequal %}
-                              </div>
-                          </td>
-                        </tr>
-                      {% endfor %}
-                      </tbody>
+                    <table class="table table-hover table-expandable table-sticky-header">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>IP</th>
+                                <th>Method</th>
+                                <th>Path</th>
+                            </tr>
+                        </thead>
+				        <tbody>
+                        {% for item in contents %}
+                            <tr>
+                                <td>{{ item.attacktime }}</td>
+                                <td>{{ item.attackip }}</td>
+                                <td style="text-transform:uppercase;">{{ item.method }}</td>
+                                <td>{{ item.path }}</td>
+                             </tr>
+					        <tr>
+						        <td colspan="6">
+							        <div class="text-left" style="overflow-y:auto;height:200px;">
+                                    <div style="width:90%;word-break:break-all">
+                                        <strong>HEADERS:</strong>
+                                            {{ item.headers }}<br>
+                                        <strong>POST:</strong>
+                                        {% ifnotequal item.post '[]' %}
+                                            {{ item.post }}
+                                        {% endifnotequal %}
+                                        <br>
+                                        <strong>GET:</strong>
+                                        {% ifnotequal item.get '[]' %}
+                                            {{ item.get }}
+                                        {% endifnotequal %}
+                                        <br>
+                                        <strong>RESPONSE:</strong>
+                                        {% ifnotequal item.response '[]' %}
+                                            {{ item.response }}
+                                        {% endifnotequal %}
+                                        <br>
+                                        <button type="button" class="btn btn-primary" onclick="showRender({{ item.index }})">Render</button>
+                                        <br>
+                                        <div id="render{{ item.index }}" style="display: none;">
+                                            {% ifnotequal item.response '[]' %}
+                                                {% autoescape off %}
+                                                {{ item.response }}
+                                                {% endautoescape %}
+                                            {% endifnotequal %}
+                                        </div>
+                                    </div>
+                                    </div>
+						        </td>
+					        </tr>
+                        {% endfor %}
+                        </tbody>
                     </table>
                   </div>
                 </div>
@@ -277,7 +298,8 @@
     </div>
     <script src="{% static "scripts/jquery-3.3.1.min.js" %}"></script>
     <script src="{% static "scripts/bootstrap.min.js" %}"></script>
-    <script src="{% static "scripts/bootstrap-table.min.js" %}"></script>
+{#    <script src="{% static "scripts/bootstrap-table.min.js" %}"></script>#}
+    <script src="{% static "scripts/bootstrap-table-expandable.js" %}"></script>
     <script src="{% static "scripts/popper.min.js" %}" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="{% static "scripts/Chart.min.js" %}"></script>
     <script src="{% static "scripts/shards.min.js" %}"></script>
