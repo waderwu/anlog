@@ -84,11 +84,42 @@ def show(requests):
 
 
 def search(requests):
-    keyword = requests.GET['keyword']
+
+    log_list = None
+
+    if "keyword" in requests.GET:
+        keyword = requests.GET['keyword']
+        log_list = Log.objects.filter(Q(headers__iregex=keyword)|Q(post__iregex=keyword)|Q(get__iregex=keyword)|Q(response__iregex=keyword))
+
+    if "ip" in requests.GET:
+        ip = requests.GET['ip']
+        if log_list:
+            log_list = log_list.objects.filter(attackip=ip)
+        else:
+            log_list = Log.objects.filter(attackip=ip)
+
+    if "method" in requests.GET:
+        method = requests.GET['method']
+        if log_list:
+            log_list = log_list.filter(method=method)
+        else:
+            log_list = Log.objects.filter(method=method)
+
+    if "post" in requests.GET:
+        post = requests.GET['post']
+        if log_list:
+            log_list = log_list.filter(post__iregex=post)
+        else:
+            log_list = Log.objects.filter(post__iregex=post)
+
+    if "get" in requests.GET:
+        get = requests.GET['get']
+        if log_list:
+            log_list = log_list.filter(get__iregex=get)
+        else:
+            log_list = Log.objects.filter(get__iregex=get)
 
     # retjs = {}
-
-    log_list = Log.objects.filter(Q(attackip__iregex=keyword)|Q(headers__iregex=keyword)|Q(post__iregex=keyword)|Q(get__iregex=keyword)|Q(response__iregex=keyword))
     # retjs['attackip'] = serializers.serialize("json", attackiplogs)
     #
     # headerslogs = Log.objects.filter(headers__iregex=keyword)
