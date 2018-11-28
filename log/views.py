@@ -8,13 +8,15 @@ from .models import Log
 import requests as rq
 import json
 from datetime import datetime
+from .plugin.attack import Attack
+import sys
+# sys.path.append("./plugin")
 
 # Create your views here.
 
-
 def index(requests):
     log_list = Log.objects.all()
-    paginator = Paginator(log_list, 3)
+    paginator = Paginator(log_list, 10)
 
     page = requests.GET.get('page')
     try:
@@ -53,23 +55,6 @@ def index(requests):
 def login(requests):
     return HttpResponse("hello man")
 
-
-def update(requests):
-    url = "http://192.168.197.132/logser.php"
-    r = rq.get(url)
-    jsonr = json.loads(r.text)
-    print(jsonr)
-    for key in jsonr:
-        jlog = json.loads(jsonr[key])
-        ip = jlog['ip']
-        time = datetime.strptime(jlog['time'], "%Y-%m-%d %H:%M:%S")
-        method = jlog['method'].lower()
-        response = jlog['response']
-        log = Log(attackip=ip, attacktime=time, method=method, path=jlog['path'], headers=jlog['headers'], post=jlog['post'], get=jlog['get'], response=response)
-        log.save()
-    return HttpResponse("ok")
-
-
 def replay(requests):
     logid = requests.GET['id']
     log = Log.objects.get(pk=logid)
@@ -85,36 +70,37 @@ def show(requests):
 
 def search(requests):
 
-    log_list = None
+    log_list = 'ggg'
 
     if "keyword" in requests.GET:
         keyword = requests.GET['keyword']
         log_list = Log.objects.filter(Q(headers__iregex=keyword)|Q(post__iregex=keyword)|Q(get__iregex=keyword)|Q(response__iregex=keyword))
 
+    print(type(log_list))
     if "ip" in requests.GET:
         ip = requests.GET['ip']
-        if log_list:
-            log_list = log_list.objects.filter(attackip=ip)
+        if log_list !='ggg':
+            log_list = log_list.filter(attackip=ip)
         else:
             log_list = Log.objects.filter(attackip=ip)
 
     if "method" in requests.GET:
         method = requests.GET['method']
-        if log_list:
+        if log_list !='ggg':
             log_list = log_list.filter(method=method)
         else:
             log_list = Log.objects.filter(method=method)
 
     if "post" in requests.GET:
         post = requests.GET['post']
-        if log_list:
+        if log_list !='ggg':
             log_list = log_list.filter(post__iregex=post)
         else:
             log_list = Log.objects.filter(post__iregex=post)
 
     if "get" in requests.GET:
         get = requests.GET['get']
-        if log_list:
+        if log_list !='ggg':
             log_list = log_list.filter(get__iregex=get)
         else:
             log_list = Log.objects.filter(get__iregex=get)
@@ -136,7 +122,7 @@ def search(requests):
 
     # print(JsonResponse(retjs))
     # return JsonResponse(retjs)
-    paginator = Paginator(log_list, 3)
+    paginator = Paginator(log_list, 20)
 
     page = requests.GET.get('page')
     try:

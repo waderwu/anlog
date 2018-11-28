@@ -11,10 +11,9 @@ class Log(models.Model):
     headers = models.TextField()
     post = models.TextField()
     get = models.TextField()
+    attacktype = models.TextField()
     response = models.TextField()
 
-    def attacktype(self):
-        return "rce"
 
     def replay(self):
         path = self.path

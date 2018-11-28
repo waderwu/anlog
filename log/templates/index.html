@@ -234,15 +234,6 @@
                                             {{ item.response }}
                                         {% endifnotequal %}
                                         <br>
-                                        <button type="button" class="btn btn-primary" onclick="showRender({{ item.index }})">Render</button>
-                                        <br>
-                                        <div id="render{{ item.index }}" style="display: none;">
-                                            {% ifnotequal item.response '[]' %}
-                                                {% autoescape off %}
-                                                {{ item.response }}
-                                                {% endautoescape %}
-                                            {% endifnotequal %}
-                                        </div>
                                     </div>
                                     </div>
 						        </td>
