@@ -5,12 +5,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 # from django.utils.safestring import mark_safe
 from .models import Log
+from django.db.models import Count
 import requests as rq
 import json
 from datetime import datetime
 from .plugin.attack import Attack
 import sys
-# sys.path.append("./plugin")
+
 
 # Create your views here.
 
@@ -172,4 +173,22 @@ def filter(requests):
 
 
 def statistics(requests):
-    pass
+    ips = Log.objects.values_list("attackip", flat=True).distinct()
+    #list all different ip
+    for ip in ips:
+        print(ip)
+
+    #ervery ip attack count
+    ipcounts = Log.objects.values('attackip').annotate(Count('attackip')).order_by()
+    for ipcount in ipcounts:
+        print(ipcount)
+
+    #every ip attack success count
+    sucounts = Log.objects.filter(~Q(attacktype='[]')).values('attackip').annotate(Count('attackip')).order_by()
+
+    for succount in sucounts:
+        print(succount)
+
+    # print(ipcounts[0].attackip__count)
+
+    return HttpResponse("ok")
