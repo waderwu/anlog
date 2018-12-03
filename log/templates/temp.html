@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    {% load static from staticfiles %}
+    <link rel="icon" href="{% static "images/favicon.ico" %}">
+    <link href="{% static "styles/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "styles/jquery.dataTables.min.css" %}" rel="stylesheet">
+    <link href="{% static "styles/select.dataTables.min.css" %}" rel="stylesheet">
+    <link href="{% static "styles/buttons.dataTables.min.css" %}" rel="stylesheet">
+    <link href="{% static "styles/loglist.css" %}" rel="stylesheet">
+    <link href="{% static "styles/dashboard.css" %}" rel="stylesheet">
+
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
+      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+          <a class="nav-link" href="#">Sign out</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">
+                  <span data-feather="home"></span>
+                  Dashboard <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file"></span>
+                  Orders
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="shopping-cart"></span>
+                  Products
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="users"></span>
+                  Customers
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="bar-chart-2"></span>
+                  Reports
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="layers"></span>
+                  Integrations
+                </a>
+              </li>
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Saved reports</span>
+              <a class="d-flex align-items-center text-muted" href="#">
+                <span data-feather="plus-circle"></span>
+              </a>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Current month
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Last quarter
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Social engagement
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Year-end sale
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-10 ml-sm-auto col-lg-10 px-4">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+            <div class="btn-toolbar mb-2 mb-md-0">
+              <div class="btn-group mr-2">
+                <button class="btn btn-sm btn-outline-secondary">Share</button>
+                <button class="btn btn-sm btn-outline-secondary">Export</button>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                <span data-feather="calendar"></span>
+                This week
+              </button>
+            </div>
+          </div>
+          <div class="input-group mt-3 mb-3">
+                <select class="col-md-2 col-lg-1">
+                        <option>Method</option>
+                        <option>IP Address</option>
+                        <option>Keyword</option>
+                </select>
+                <input type="text" class="col-md-8 col-lg-10" placeholder="Content...">
+                <button type="button" class="btn col-md-2 col-lg-1">Search</button>
+          </div>
+
+          <table id="example" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Time</th>
+                        <th>IP</th>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th></th>
+                        <th>Time</th>
+                        <th>IP</th>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Type</th>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </main>
+
+      </div>
+    </div>
+
+    <script src="{% static "scripts/jquery-3.3.1.js" %}"></script>
+    <script src="{% static "scripts/popper.min.js" %}"></script>
+    <script src="{% static "scripts/bootstrap.min.js" %}"></script>
+    <script src="{% static "scripts/jquery.dataTables.min.js" %}"></script>
+    <script src="{% static "scripts/dataTables.select.min.js" %}"></script>
+    <script src="{% static "scripts/dataTables.buttons.min.js" %}"></script>
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+    <script>
+      feather.replace()
+    </script>
+    <!-- Datatables Config -->
+    <script>
+        /* Formatting function for row details - modify as you need */
+function format ( d ) {
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:500px;">'+
+        '<tr>'+
+            '<td>Headers:</td>'+
+            '<td><code>'+d.fields.headers+'</code></td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Post:</td>'+
+            '<td>'+d.fields.post+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Get:</td>'+
+            '<td>'+d.fields.get+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Response:</td>'+
+            '<td><div style="overflow-y:auto;height:200px;"><xmp>'+d.fields.response+'</xmp></div></td>'+
+        '</tr>'+
+    '</table>';
+}
+
+$(document).ready(function() {
+    var table = $('#example').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'selected',
+            'selectedSingle',
+            'selectAll',
+            'selectNone',
+            'selectRows',
+        ],
+        select: true,
+        searching: false,
+        ordering: false,
+        "ajax": {
+            "processing": true,
+            "url": "{% url 'show' %}",
+            "dataSrc": ""
+        },
+        "columns": [
+            {
+                "className":      'details-control',
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ''
+            },
+            { "data": "fields.attacktime" },
+            { "data": "fields.attackip" },
+            { "data": "fields.method" },
+            { "data": "fields.path" },
+            { "data": "fields.attacktype"}
+        ],
+        "order": [[1, 'asc']]
+    } );
+
+
+    // Add event listener for opening and closing details
+    $('#example tbody').on('click', 'td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    } );
+} );
+    </script>
+
+  </body>
+</html>

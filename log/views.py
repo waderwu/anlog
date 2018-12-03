@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-# from django.utils.safestring import mark_safe
+from django.utils.safestring import mark_safe
 from .models import Log
 from django.db.models import Count
 import requests as rq
@@ -50,7 +50,7 @@ def index(requests):
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
-    return render(requests, "index.html", {'contents': dicts, 'page_info': page_info})
+    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info})
 
 
 def login(requests):
