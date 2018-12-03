@@ -178,6 +178,8 @@ def statistics(requests):
     for ip in ips:
         print(ip)
 
+    
+
     #ervery ip attack count
     ipcounts = Log.objects.values('attackip').annotate(Count('attackip')).order_by()
     for ipcount in ipcounts:
