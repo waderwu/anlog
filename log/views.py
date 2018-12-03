@@ -47,6 +47,7 @@ def index(requests):
         item['post'] = log.post
         item['get'] = log.get
         item['response'] = log.response
+        item['attacktype'] = log.attacktype
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
