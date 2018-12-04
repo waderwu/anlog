@@ -36,9 +36,9 @@ def index(requests):
     page_info['next_page_number'] = logs.next_page_number
 
     dicts = []
-    for i, log in enumerate(logs):
+    for log in logs:
         item = {}
-        item['index'] = i+1
+        item['index'] = log.pk
         item['attackip'] = log.attackip
         item['attacktime'] = log.attacktime
         item['method'] = log.method
@@ -58,7 +58,7 @@ def login(requests):
     return HttpResponse("hello man")
 
 def replay(requests):
-    logid = requests.GET['id']
+    logid = requests.GET['id[]']
     log = Log.objects.get(pk=logid)
     return HttpResponse(log.replay())
 

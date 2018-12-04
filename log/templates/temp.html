@@ -53,82 +53,6 @@
 
     <div class="container-fluid">
       <div class="row">
-{#        <nav class="col-md-2 d-none d-md-block bg-light sidebar">#}
-{#          <div class="sidebar-sticky">#}
-{#            <ul class="nav flex-column">#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link active" href="#">#}
-{#                  <span data-feather="home"></span>#}
-{#                  Dashboard <span class="sr-only">(current)</span>#}
-{#                </a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="file"></span>#}
-{#                  Orders#}
-{#                </a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="shopping-cart"></span>#}
-{#                  Products#}
-{#                </a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="users"></span>#}
-{#                  Customers#}
-{#                </a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="bar-chart-2"></span>#}
-{#                  Reports#}
-{#                </a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="layers"></span>#}
-{#                  Integrations#}
-{#                </a>#}
-{#              </li>#}
-{#            </ul>#}
-{##}
-{#            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">#}
-{#              <span>Saved reports</span>#}
-{#              <a class="d-flex align-items-center text-muted" href="#">#}
-{#                <span data-feather="plus-circle"></span>#}
-{#              </a>#}
-{#            </h6>#}
-{#            <ul class="nav flex-column mb-2">#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="file-text"></span>#}
-{#                  Current month#}
-{#                </a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="file-text"></span>#}
-{#                  Last quarter#}
-{#                </a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="file-text"></span>#}
-{#                  Social engagement#}
-{#                </a>#}
-{#              </li>#}
-{#              <li class="nav-item">#}
-{#                <a class="nav-link" href="#">#}
-{#                  <span data-feather="file-text"></span>#}
-{#                  Year-end sale#}
-{#                </a>#}
-{#              </li>#}
-{#            </ul>#}
-{#          </div>#}
-{#        </nav>#}
-
         <main role="main" class="col-md-12 ml-sm-auto px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Dashboard</h1>
@@ -197,7 +121,7 @@
                                     <td>Response:</td>
                                     <td>
                                         <div style="overflow-y:auto;height:200px;word-break:break-all">
-                                            <code>
+                                            <code class="response">
                                                 {{ item.response }}
                                             </code>
                                         </div>
@@ -224,13 +148,16 @@
                 {% endif %}
                 </ul>
             </div>
+            <div class="float-right">
+                <button class="btn btn-outline-success my-2 my-sm-0" id="replay" type="submit">Replay</button>
+            </div>
 
         </main>
 
       </div>
     </div>
 
-    <script src="{% static "scripts/jquery-slim.min.js" %}"></script>
+    <script src="{% static "scripts/jquery-3.3.1.js" %}"></script>
     <script src="{% static "scripts/popper.min.js" %}"></script>
     <script src="{% static "scripts/bootstrap.js" %}"></script>
     <script src="{% static "scripts/multiselect.js" %}"></script>
@@ -258,6 +185,28 @@
                 }
             );
         });
+    </script>
+
+    <script>
+        $("#replay").click(function() {
+            var $res = $(".selected").next();
+            var ids = [];
+            $res.each(function(i){
+                ids[i]=$(this).attr("class").split(' ')[1].substring(7);//this关键字是用来获取当前的DOM对象，将其包装在jQuery对象中
+            });
+            if (ids.length !== 0){
+                $.ajax({
+                    url:"/log/replay",
+                    type: "get",
+                    data: {
+                        "id": ids
+                    },
+                    error: function () {
+                        alert("Sorry, fail to produce replay script");
+                    }
+                });
+            }
+        })
     </script>
 
 
