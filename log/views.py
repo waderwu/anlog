@@ -47,6 +47,7 @@ def index(requests):
         item['post'] = log.post
         item['get'] = log.get
         item['response'] = log.response
+        item['attacktype'] = log.attacktype
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
@@ -156,7 +157,7 @@ def search(requests):
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
-    return render(requests, "index.html", {'contents': dicts, 'page_info': page_info})
+    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info})
 
 
 def filter(requests):
