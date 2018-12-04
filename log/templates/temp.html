@@ -121,7 +121,7 @@
                                     <td>Response:</td>
                                     <td>
                                         <div style="overflow-y:auto;height:200px;word-break:break-all">
-                                            <code>
+                                            <code class="response">
                                                 {{ item.response }}
                                             </code>
                                         </div>
@@ -148,13 +148,16 @@
                 {% endif %}
                 </ul>
             </div>
+            <div class="float-right">
+                <button class="btn btn-outline-success my-2 my-sm-0" id="replay" type="submit">Replay</button>
+            </div>
 
         </main>
 
       </div>
     </div>
 
-    <script src="{% static "scripts/jquery-slim.min.js" %}"></script>
+    <script src="{% static "scripts/jquery-3.3.1.js" %}"></script>
     <script src="{% static "scripts/popper.min.js" %}"></script>
     <script src="{% static "scripts/bootstrap.js" %}"></script>
     <script src="{% static "scripts/multiselect.js" %}"></script>
@@ -182,6 +185,28 @@
                 }
             );
         });
+    </script>
+
+    <script>
+        $("#replay").click(function() {
+            var $res = $(".selected").next();
+            var ids = [];
+            $res.each(function(i){
+                ids[i]=$(this).attr("class").split(' ')[1].substring(7);//this关键字是用来获取当前的DOM对象，将其包装在jQuery对象中
+            });
+            if (ids.length !== 0){
+                $.ajax({
+                    url:"/log/replay",
+                    type: "get",
+                    data: {
+                        "id": ids
+                    },
+                    error: function () {
+                        alert("Sorry, fail to produce replay script");
+                    }
+                });
+            }
+        })
     </script>
 
 
