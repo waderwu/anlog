@@ -11,10 +11,6 @@
     {% load static from staticfiles %}
     <link rel="icon" href="{% static "images/favicon.ico" %}">
     <link href="{% static "styles/bootstrap.css" %}" rel="stylesheet">
-{#    <link href="{% static "styles/jquery.dataTables.min.css" %}" rel="stylesheet">#}
-{#    <link href="{% static "styles/select.dataTables.min.css" %}" rel="stylesheet">#}
-{#    <link href="{% static "styles/buttons.dataTables.min.css" %}" rel="stylesheet">#}
-{#    <link href="{% static "styles/loglist.css" %}" rel="stylesheet">#}
     <link href="{% static "styles/dashboard.css" %}" rel="stylesheet">
     <script>
         function showDetail(index){
@@ -68,18 +64,22 @@
             </div>
           </div>
           <form class="form-inline mt-2 mb-2" action="/log/search" method="get">
-            <button class="condition" id="keyword" onclick="selectCondition()">Keyword</button>:
+            <p class="condition ml-1" id="keyword" >Keyword</p>:
             <input  type="text" name="keyword">
-            <button class="condition ml-1" id="ip">IP Address</button>:
+            <p class="condition ml-1" id="ip">IP Address</p>:
             <input  type="text" name="ip">
-            <button id="method" class="ml-1 condition">Method</button>:
+            <p id="method" class="ml-1 condition">Method</p>:
             <input  type="text" name="method">
-            <button id="post" class="ml-1 condition">Post</button>:
+            <p id="post" class="ml-1 condition">Post</p>:
             <input  type="text" name="post">
-            <button id="get" class="ml-1 condition">Get</button>:
+            <p id="get" class="ml-1 condition">Get</p>:
             <input d type="text" name="get">
             <button class="btn btn-outline-success my-2 my-sm-0 ml-1" type="submit">Search</button>
           </form>
+
+          <div id="code">
+
+          </div>
 
           <table id="loglist" class="table" style="width:100%">
                 <thead class="thead-dark">
@@ -196,10 +196,14 @@
             });
             if (ids.length !== 0){
                 $.ajax({
-                    url:"/log/replay",
+                    url:"/log/replay/",
                     type: "get",
                     data: {
                         "id": ids
+                    },
+                    success:function($result)
+                    {
+                       $("#code").html("<pre><code>"+$result+"<code></pre>");
                     },
                     error: function () {
                         alert("Sorry, fail to produce replay script");
