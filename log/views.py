@@ -79,28 +79,28 @@ def search(requests):
         log_list = Log.objects.filter(Q(headers__iregex=keyword)|Q(post__iregex=keyword)|Q(get__iregex=keyword)|Q(response__iregex=keyword))
 
     print(type(log_list))
-    if "ip" in requests.GET:
+    if requests.GET['ip'] != '':
         ip = requests.GET['ip']
         if log_list !='ggg':
             log_list = log_list.filter(attackip=ip)
         else:
             log_list = Log.objects.filter(attackip=ip)
 
-    if "method" in requests.GET:
+    if requests.GET['method'] != '':
         method = requests.GET['method']
         if log_list !='ggg':
             log_list = log_list.filter(method=method)
         else:
             log_list = Log.objects.filter(method=method)
 
-    if "post" in requests.GET:
+    if requests.GET['post'] != '':
         post = requests.GET['post']
         if log_list !='ggg':
             log_list = log_list.filter(post__iregex=post)
         else:
             log_list = Log.objects.filter(post__iregex=post)
 
-    if "get" in requests.GET:
+    if requests.GET['get'] != '':
         get = requests.GET['get']
         if log_list !='ggg':
             log_list = log_list.filter(get__iregex=get)
@@ -154,6 +154,7 @@ def search(requests):
         item['post'] = log.post
         item['get'] = log.get
         item['response'] = log.response
+        item['attacktype'] = log.attacktype
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
