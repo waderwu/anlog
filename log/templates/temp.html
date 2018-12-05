@@ -23,17 +23,17 @@
     <header>
       <!-- Fixed navbar -->
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <span class="navbar-brand">Navbar</span>
+        <span class="navbar-brand">Web Log Analyser</span>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-            </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
+              <a class="nav-link" href="/log/">Home</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="/log/show">List<span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <a class="nav-link disabled" href="#">Disabled</a>
@@ -45,9 +45,9 @@
           </form>
         </div>
       </nav>
- </header>
+  </header>
 
-    <div class="container-fluid">
+    <div class="container-fluid mb-5">
       <div class="row">
         <main role="main" class="col-md-12 ml-sm-auto px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -64,17 +64,17 @@
             </div>
           </div>
           <form class="form-inline mt-2 mb-2" action="/log/search/" method="get">
-            <p class="condition ml-1" id="keyword" >Keyword</p>:
-            <input  type="text" name="keyword">
-            <p class="condition ml-1" id="ip">IP Address</p>:
-            <input  type="text" name="ip">
-            <p id="method" class="ml-1 condition">Method</p>:
-            <input  type="text" name="method">
-            <p id="post" class="ml-1 condition">Post</p>:
-            <input  type="text" name="post">
-            <p id="get" class="ml-1 condition">Get</p>:
-            <input d type="text" name="get">
-            <button class="btn btn-outline-success my-2 my-sm-0 ml-1" type="submit">Search</button>
+            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">Keyword</button>
+            <input class="form-control form-control-sm col-md-1" type="text" name="keyword">
+            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">IP Address</button>
+            <input class="form-control form-control-sm col-md-1" type="text" name="ip">
+            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">Method</button>
+            <input class="form-control form-control-sm col-md-1" type="text" name="method">
+            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">Post</button>
+            <input class="form-control form-control-sm col-md-1" type="text" name="post">
+            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">Get</button>
+            <input class="form-control form-control-sm col-md-1" type="text" name="get">
+            <button class="btn btn-sm btn-outline-success ml-1" type="submit">Search</button>
           </form>
 
           <div id="ipInfo">
@@ -152,7 +152,13 @@
                         {% endfor %}
                 </tbody>
             </table>
-            <div class="pagination" align="right">
+
+        </main>
+      </div>
+    </div>
+
+    <nav class="navbar fixed-bottom navbar-light bg-light">
+        <div class="d-inline-block">
                 <ul class="pagination">
                 {% if page_info.has_previous %}
                     <li class="page-item"><a class="page-link" href="?page={{ page_info.previous_page_number }}">Previous</a></li>
@@ -167,14 +173,10 @@
                 {% endif %}
                 </ul>
             </div>
-            <div class="float-right">
-                <button class="btn btn-outline-success my-2 my-sm-0" id="replay" type="submit">Replay</button>
+            <div class="d-inline-block float-right">
+                <button class="btn btn-sm btn-outline-success my-2 my-sm-0" id="replay" type="submit">Script Produce</button>
             </div>
-
-        </main>
-
-      </div>
-    </div>
+    </nav>
 
     <script src="{% static "scripts/jquery-3.3.1.js" %}"></script>
     <script src="{% static "scripts/popper.min.js" %}"></script>

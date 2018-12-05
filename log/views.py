@@ -10,6 +10,21 @@ from django.db.models import Count
 # Create your views here.
 
 def index(requests):
+
+    return render(requests, "index.html")
+
+
+def login(requests):
+    return HttpResponse("hello man")
+
+
+def replay(requests):
+    logid = requests.GET['id[]']
+    log = Log.objects.get(pk=logid)
+    return HttpResponse(log.replay())
+
+
+def show(requests):
     log_list = Log.objects.all()
     ip_addrs = set(log_list.values_list("attackip"))
     ip_info = {}
@@ -55,23 +70,7 @@ def index(requests):
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
-    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info, 'ip_info':ip_info})
-
-
-def login(requests):
-    return HttpResponse("hello man")
-
-def replay(requests):
-    logid = requests.GET['id[]']
-    log = Log.objects.get(pk=logid)
-    return HttpResponse(log.replay())
-
-
-def show(requests):
-    logs = Log.objects.all()
-
-    jslogs = serializers.serialize("json", logs)
-    return HttpResponse(jslogs, content_type="application/json")
+    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info, 'ip_info': ip_info})
 
 
 def search(requests):
