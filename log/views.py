@@ -3,14 +3,8 @@ from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
-from django.utils.safestring import mark_safe
 from .models import Log
 from django.db.models import Count
-import requests as rq
-import json
-from datetime import datetime
-from .plugin.attack import Attack
-import sys
 
 
 # Create your views here.
@@ -47,7 +41,9 @@ def index(requests):
         item['post'] = log.post
         item['get'] = log.get
         item['response'] = log.response
+        item['file'] = log.file
         item['attacktype'] = log.attacktype
+        item['success'] = log.success
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
@@ -107,23 +103,6 @@ def search(requests):
         else:
             log_list = Log.objects.filter(get__iregex=get)
 
-    # retjs = {}
-    # retjs['attackip'] = serializers.serialize("json", attackiplogs)
-    #
-    # headerslogs = Log.objects.filter(headers__iregex=keyword)
-    # retjs['headers'] = serializers.serialize("json", headerslogs)
-    #
-    # postlogs = Log.objects.filter(post__iregex=keyword)
-    # retjs['post'] = serializers.serialize("json", postlogs)
-    #
-    # getlogs = Log.objects.filter(get__iregex=keyword)
-    # retjs['get'] = serializers.serialize("json", getlogs)
-    #
-    # reslogs = Log.objects.filter(response__iregex=keyword)
-    # retjs['response'] = serializers.serialize("json", reslogs)
-
-    # print(JsonResponse(retjs))
-    # return JsonResponse(retjs)
     paginator = Paginator(log_list, 20)
 
     page = requests.GET.get('page')

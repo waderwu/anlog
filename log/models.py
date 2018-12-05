@@ -4,6 +4,7 @@ from django.db import models
 
 
 class Log(models.Model):
+    uid = models.CharField(max_length=40)
     attackip = models.CharField(max_length=20)
     attacktime = models.DateTimeField()
     method = models.CharField(max_length=10)
@@ -12,7 +13,10 @@ class Log(models.Model):
     post = models.TextField()
     get = models.TextField()
     attacktype = models.TextField()
-    response = models.TextField()
+    file = models.TextField()
+    response = models.TextField(default='')
+    success = models.BooleanField(default=False)
+
 
 
     def replay(self):
