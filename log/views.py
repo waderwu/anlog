@@ -11,6 +11,14 @@ from django.db.models import Count
 
 def index(requests):
     log_list = Log.objects.all()
+    ip_addrs = set(log_list.values_list("attackip"))
+    ip_info = {}
+    for ip in ip_addrs:
+        ip_info[ip[0]] = {}
+        visited_log = log_list.filter(attackip=ip[0])
+        ip_info[ip[0]]['visit_num'] = len(visited_log)
+        ip_info[ip[0]]['attack_num'] = len(visited_log.exclude(attacktype="[]"))
+
     paginator = Paginator(log_list, 10)
 
     page = requests.GET.get('page')
@@ -47,7 +55,7 @@ def index(requests):
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
-    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info})
+    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info, 'ip_info':ip_info})
 
 
 def login(requests):
