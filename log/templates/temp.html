@@ -47,7 +47,7 @@
       </nav>
   </header>
 
-    <div class="container-fluid mb-5">
+    <div class="container-fluid">
       <div class="row">
         <main role="main" class="col-md-12 ml-sm-auto px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -64,35 +64,18 @@
             </div>
           </div>
           <form class="form-inline mt-2 mb-2" action="/log/search/" method="get">
-            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">Keyword</button>
-            <input class="form-control form-control-sm col-md-1" type="text" name="keyword">
-            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">IP Address</button>
-            <input class="form-control form-control-sm col-md-1" type="text" name="ip">
-            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">Method</button>
-            <input class="form-control form-control-sm col-md-1" type="text" name="method">
-            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">Post</button>
-            <input class="form-control form-control-sm col-md-1" type="text" name="post">
-            <button class="btn btn-sm btn-outline-secondary ml-1 mr-1 condition" type="button">Get</button>
-            <input class="form-control form-control-sm col-md-1" type="text" name="get">
+            <button class="btn btn-sm btn-outline-secondary ml-1 condition" value="keyword" type="button">Keyword</button>
+            <input class="form-control form-control-sm col-md-1 ml-1" type="text" name="keyword">
+            <button class="btn btn-sm btn-outline-secondary ml-1 condition" value="ip" type="button">IP Address</button>
+            <input class="form-control form-control-sm col-md-1 ml-1" type="text" name="ip">
+            <button class="btn btn-sm btn-outline-secondary ml-1 condition" value="method" type="button">Method</button>
+            <input class="form-control form-control-sm col-md-1 ml-1" type="text" name="method">
+            <button class="btn btn-sm btn-outline-secondary ml-1 condition" value="post" type="button">Post</button>
+            <input class="form-control form-control-sm col-md-1 ml-1" type="text" name="post">
+            <button class="btn btn-sm btn-outline-secondary ml-1 condition" value="get" type="button">Get</button>
+            <input class="form-control form-control-sm col-md-1 ml-1" type="text" name="get">
             <button class="btn btn-sm btn-outline-success ml-1" type="submit">Search</button>
           </form>
-
-          <div id="ipInfo">
-              <table border="1">
-                  <tr>
-                      <th>IP Address</th>
-                      <th>Visit</th>
-                      <th>Attack</th>
-                  </tr>
-                  {% for key,sub_key  in ip_info.items %}
-                  <tr>
-                      <td>{{ key }}</td>
-                      <td>{{ sub_key.visit_num }}</td>
-                      <td>{{ sub_key.attack_num }}</td>
-                  </tr>
-                  {% endfor %}
-              </table>
-          </div>
 
           <div id="code">
 
@@ -158,24 +141,35 @@
     </div>
 
     <nav class="navbar fixed-bottom navbar-light bg-light">
-        <div class="d-inline-block">
-                <ul class="pagination">
+{#        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">#}
+{#            <h1 class="h2">Dashboard</h1>#}
+{#            <div class="btn-toolbar mb-2 mb-md-0">#}
+{#              <div class="btn-group mr-2">#}
+{#                <button class="btn btn-sm btn-outline-secondary">Share</button>#}
+{#                <button class="btn btn-sm btn-outline-secondary">Export</button>#}
+{#              </div>#}
+{#              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">#}
+{#                <span data-feather="calendar"></span>#}
+{#                This week#}
+{#              </button>#}
+{#            </div>#}
+{#          </div>#}
+                <div class="btn-group mr-2 pagination">
                 {% if page_info.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_info.previous_page_number }}">Previous</a></li>
+                    <button class="btn btn-sm btn-outline-secondary"><a href="?page={{ page_info.previous_page_number }}">Previous</a></button>
                 {% else %}
-                    <li class="page-item disabled"><a class="page-link">Previous</a></li>
+                    <button class="btn btn-sm btn-outline-secondary disabled"><a>Previous</a></button>
                 {% endif %}
-                    <li class="page-item"><a class="page-link">Page {{ page_info.number }} of {{ page_info.num_pages }}</a></li>
+                    <button class="btn btn-sm btn-outline-secondary disabled"><a>Page {{ page_info.number }} of {{ page_info.num_pages }}</a></button>
                 {% if page_info.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page_info.next_page_number }}">Next</a></li>
+                    <button class="btn btn-sm btn-outline-secondary"><a href="?page={{ page_info.next_page_number }}">Next</a></button>
                 {% else %}
-                    <li class="page-item disabled"><a class="page-link">Next</a></li>
+                    <button class="btn btn-sm btn-outline-secondary disabled"><a>Next</a></button>
                 {% endif %}
-                </ul>
-            </div>
-            <div class="d-inline-block float-right">
-                <button class="btn btn-sm btn-outline-success my-2 my-sm-0" id="replay" type="submit">Script Produce</button>
-            </div>
+                </div>
+                <input class="text" type="text" name="page_jump">
+                <button class="btn btn-sm btn-outline-secondary" value="page_jump" type="button"><a href="#">Jump</a></button>
+                <button class="btn btn-sm btn-outline-success" id="replay" type="submit">Script Produce</button>
     </nav>
 
     <script src="{% static "scripts/jquery-3.3.1.js" %}"></script>
@@ -196,15 +190,17 @@
     <script>
         $(document).ready(function(){
             $(".details").hide();
-            $(".condition").click(function () {
-                var $input = $("input[name='"+$(this).attr("id")+"']");
-                if($input.attr("disabled") === undefined){
-                    $input.attr("disabled","disabled");
-                }else{
-                    $input.removeAttr("disabled");
-                }
-                }
-            );
+        });
+    </script>
+
+    <script>
+        $(".condition").click(function () {
+            var $input = $("input[name='" + $(this).attr("value") + "']");
+            if ($input.attr("disabled") === undefined) {
+                $input.attr("disabled", "disabled");
+            } else {
+                $input.removeAttr("disabled");
+            }
         });
     </script>
 

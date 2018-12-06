@@ -10,8 +10,16 @@ from django.db.models import Count
 # Create your views here.
 
 def index(requests):
+    log_list = Log.objects.all()
+    ip_addrs = set(log_list.values_list("attackip"))
+    ip_info = {}
+    for ip in ip_addrs:
+        ip_info[ip[0]] = {}
+        visited_log = log_list.filter(attackip=ip[0])
+        ip_info[ip[0]]['visit_num'] = len(visited_log)
+        ip_info[ip[0]]['attack_num'] = len(visited_log.exclude(attacktype="[]"))
 
-    return render(requests, "index.html")
+    return render(requests, "index.html", {'ip_info': ip_info})
 
 
 def login(requests):
@@ -34,7 +42,7 @@ def show(requests):
         ip_info[ip[0]]['visit_num'] = len(visited_log)
         ip_info[ip[0]]['attack_num'] = len(visited_log.exclude(attacktype="[]"))
 
-    paginator = Paginator(log_list, 10)
+    paginator = Paginator(log_list, 20)
 
     page = requests.GET.get('page')
     try:
@@ -70,45 +78,48 @@ def show(requests):
         # item['pageHtml'] = mark_safe(log.response)
         dicts.append(item)
 
-    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info, 'ip_info': ip_info})
+    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info})
 
 
 def search(requests):
 
-    log_list = 'ggg'
+    log_list = 'filler'
 
     if "keyword" in requests.GET:
         keyword = requests.GET['keyword']
         log_list = Log.objects.filter(Q(headers__iregex=keyword)|Q(post__iregex=keyword)|Q(get__iregex=keyword)|Q(response__iregex=keyword))
 
-    print(type(log_list))
-    if requests.GET['ip'] != '':
-        ip = requests.GET['ip']
-        if log_list !='ggg':
-            log_list = log_list.filter(attackip=ip)
-        else:
-            log_list = Log.objects.filter(attackip=ip)
+    if "ip" in requests.GET:
+        if requests.GET['ip'] != '':
+            ip = requests.GET['ip']
+            if log_list != 'filler':
+                log_list = log_list.filter(attackip=ip)
+            else:
+                log_list = Log.objects.filter(attackip=ip)
 
-    if requests.GET['method'] != '':
-        method = requests.GET['method']
-        if log_list !='ggg':
-            log_list = log_list.filter(method=method)
-        else:
-            log_list = Log.objects.filter(method=method)
+    if "method" in requests.GET:
+        if requests.GET['method'] != '':
+            method = requests.GET['method']
+            if log_list != 'filler':
+                log_list = log_list.filter(method=method)
+            else:
+                log_list = Log.objects.filter(method=method)
 
-    if requests.GET['post'] != '':
-        post = requests.GET['post']
-        if log_list !='ggg':
-            log_list = log_list.filter(post__iregex=post)
-        else:
-            log_list = Log.objects.filter(post__iregex=post)
+    if "post" in requests.GET:
+        if requests.GET['post'] != '':
+            post = requests.GET['post']
+            if log_list != 'filler':
+                log_list = log_list.filter(post__iregex=post)
+            else:
+                log_list = Log.objects.filter(post__iregex=post)
 
-    if requests.GET['get'] != '':
-        get = requests.GET['get']
-        if log_list !='ggg':
-            log_list = log_list.filter(get__iregex=get)
-        else:
-            log_list = Log.objects.filter(get__iregex=get)
+    if "get" in requests.GET:
+        if requests.GET['get'] != '':
+            get = requests.GET['get']
+            if log_list != 'filler':
+                log_list = log_list.filter(get__iregex=get)
+            else:
+                log_list = Log.objects.filter(get__iregex=get)
 
     paginator = Paginator(log_list, 20)
 
