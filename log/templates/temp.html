@@ -12,11 +12,6 @@
     <link rel="icon" href="{% static "images/favicon.ico" %}">
     <link href="{% static "styles/bootstrap.css" %}" rel="stylesheet">
     <link href="{% static "styles/dashboard.css" %}" rel="stylesheet">
-    <script>
-        function showDetail(index){
-            $(".detail_"+index).toggle();
-        }
-    </script>
   </head>
 
   <body>
@@ -52,16 +47,16 @@
         <main role="main" class="col-md-12 ml-sm-auto px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">Dashboard</h1>
-            <div class="btn-toolbar mb-2 mb-md-0">
-              <div class="btn-group mr-2">
-                <button class="btn btn-sm btn-outline-secondary">Share</button>
-                <button class="btn btn-sm btn-outline-secondary">Export</button>
-              </div>
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                <span data-feather="calendar"></span>
-                This week
-              </button>
-            </div>
+{#            <div class="btn-toolbar mb-2 mb-md-0">#}
+{#              <div class="btn-group mr-2">#}
+{#                <button class="btn btn-sm btn-outline-secondary">Share</button>#}
+{#                <button class="btn btn-sm btn-outline-secondary">Export</button>#}
+{#              </div>#}
+{#              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">#}
+{#                <span data-feather="calendar"></span>#}
+{#                This week#}
+{#              </button>#}
+{#            </div>#}
           </div>
           <form class="form-inline mt-2 mb-2" action="/log/search/" method="get">
             <button class="btn btn-sm btn-outline-secondary ml-1 condition" value="keyword" type="button">Keyword</button>
@@ -154,13 +149,13 @@
 {#              </button>#}
 {#            </div>#}
 {#          </div>#}
-                <div class="btn-group mr-2 pagination">
+                <div class="btn-group pagination">
                 {% if page_info.has_previous %}
                     <button class="btn btn-sm btn-outline-secondary"><a href="?page={{ page_info.previous_page_number }}">Previous</a></button>
                 {% else %}
                     <button class="btn btn-sm btn-outline-secondary disabled"><a>Previous</a></button>
                 {% endif %}
-                    <button class="btn btn-sm btn-outline-secondary disabled"><a>Page {{ page_info.number }} of {{ page_info.num_pages }}</a></button>
+                    <button class="btn btn-sm btn-outline-secondary disabled">Page {{ page_info.number }} of {{ page_info.num_pages }}</button>
                 {% if page_info.has_next %}
                     <button class="btn btn-sm btn-outline-secondary"><a href="?page={{ page_info.next_page_number }}">Next</a></button>
                 {% else %}
@@ -168,7 +163,7 @@
                 {% endif %}
                 </div>
                 <input class="text" type="text" name="page_jump">
-                <button class="btn btn-sm btn-outline-secondary" value="page_jump" type="button"><a href="#">Jump</a></button>
+                <button class="btn btn-sm btn-outline-secondary" id="page_jump" type="button">Jump</button>
                 <button class="btn btn-sm btn-outline-success" id="replay" type="submit">Script Produce</button>
     </nav>
 
@@ -186,6 +181,11 @@
       feather.replace()
     </script>
     <!-- Datatables Config -->
+    <script>
+        function showDetail(index){
+            $(".detail_"+index).toggle();
+        }
+    </script>
 
     <script>
         $(document).ready(function(){
@@ -201,6 +201,12 @@
             } else {
                 $input.removeAttr("disabled");
             }
+        });
+    </script>
+
+    <script>
+        $("#page_jump").click(function(){
+            window.location.href="/log/show?page="+$("input[name='page_jump'] ").val();
         });
     </script>
 

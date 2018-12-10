@@ -3,6 +3,17 @@ body {
   padding-bottom: 60px;
 }
 
+a {
+    text-decoration: none;
+    color: #6c757d;
+}
+
+a:hover {
+    text-decoration: none;
+    background-color: #6c757d;
+    color: #fff;
+}
+
 .feather {
   width: 16px;
   height: 16px;
