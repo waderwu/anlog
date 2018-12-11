@@ -25,28 +25,38 @@ def index(requests):
         ip_info[ip[0]]['attack_num'] = len(visited_log.exclude(attacktype="[]"))
 
     log_sorted_by_time = log_list.order_by("-attacktime")
-    latest_min = log_sorted_by_time[0].attacktime.timestamp() - (log_sorted_by_time[0].attacktime.timestamp() % 60)
-    foremost_min = latest_min - 600
-    after_min = int(latest_min) + 60
-    previous_min = int(latest_min)
+    previous_min = log_sorted_by_time[0].attacktime.replace(second=0)
+    after_min = previous_min + timedelta(minutes=1)
     visit_nums = []
-    cnt = 0
-    idx = 0
-    min_stamp = []
-    print(type(previous_min))
-    while previous_min >= foremost_min:
-        if previous_min < log_sorted_by_time[idx].attacktime.timestamp() <= after_min:
-            cnt += 1
-            idx += 1
-        else:
-            after_min, previous_min = previous_min, previous_min - 60
-            visit_nums.append(cnt)
-            print(cnt)
-            min_stamp.append(datetime.utcfromtimestamp(previous_min).strftime("%m-%d %H:%M"))
-            cnt = 0
+    min_point = []
+    for i in range(11):
+        visit_nums.append(len(log_sorted_by_time.filter(attacktime__range=(previous_min, after_min))))
+        min_point.append(str(previous_min))
+        after_min = previous_min
+        previous_min = previous_min - timedelta(minutes=1)
+    # foremost_min = latest_min - timedelta(minutes=10)
+    # foremost_min = foremost_min.astimezone(pytz.utc)
+    # after_min = latest_min + timedelta(minutes=1)
+    # previous_min = latest_min
+    # visit_nums = []
+    # cnt = 0
+    # idx = 0
+    # min_stamp = []
+    # previous_min = previous_min.astimezone(pytz.utc)
+    # print(type(previous_min))
+    # while previous_min >= foremost_min:
+    #     if log_sorted_by_time[idx].attacktime > previous_min:
+    #         cnt += 1
+    #         idx += 1
+    #     else:
+    #         previous_min = previous_min - timedelta(minutes=1)
+    #         visit_nums.append(cnt)
+    #         print(cnt)
+    #         min_stamp.append(str(previous_min))
+    #         cnt = 0
 
     return render(requests, "index.html",
-                  {'ip_info': ip_info, 'visit_nums': visit_nums, 'min_stamp': min_stamp})
+                  {'ip_info': ip_info, 'visit_nums': visit_nums, 'min_stamp': min_point})
 
 
 def login(requests):
