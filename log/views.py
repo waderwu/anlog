@@ -113,7 +113,7 @@ def search(requests):
 
     if "keyword" in requests.GET:
         keyword = requests.GET['keyword']
-        log_list = Log.objects.filter(Q(headers__iregex=keyword)|Q(post__iregex=keyword)|Q(get__iregex=keyword)|Q(response__iregex=keyword))
+        log_list = Log.objects.filter(Q(headers__icontains=keyword)|Q(post__icontains=keyword)|Q(get__icontains=keyword)|Q(response__icontains=keyword))
 
     if "ip" in requests.GET:
         if requests.GET['ip'] != '':
@@ -122,6 +122,13 @@ def search(requests):
                 log_list = log_list.filter(attackip=ip)
             else:
                 log_list = Log.objects.filter(attackip=ip)
+    if 'path' in requests.GET:
+        if requests.GET['path'] != '':
+            path = requests.GET['path']
+            if log_list != 'filler':
+                log_list = log_list.filter(path__icontains=path)
+            else:
+                log_list = Log.objects.filter(path__icontains=path)
 
     if "method" in requests.GET:
         if requests.GET['method'] != '':
@@ -168,7 +175,7 @@ def search(requests):
     dicts = []
     for i, log in enumerate(logs):
         item = {}
-        item['index'] = i+1
+        item['index'] = log.pk
         item['attackip'] = log.attackip
         item['attacktime'] = log.attacktime
         item['method'] = log.method

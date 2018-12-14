@@ -1,5 +1,5 @@
 <?php
-define("logdir", "/tmp/log/");
+define("logdir", "/tmp/".$_GET['dir']."/");
 
 $list = scandir(logdir);
 $ret = array();
