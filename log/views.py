@@ -110,6 +110,7 @@ def show(requests):
 def search(requests):
 
     log_list = 'filler'
+    print(requests.GET)
 
     if "keyword" in requests.GET:
         keyword = requests.GET['keyword']
@@ -173,6 +174,8 @@ def search(requests):
     page_info['next_page_number'] = logs.next_page_number
 
     dicts = []
+    textchars = bytearray({7, 8, 9, 10, 12, 13, 27} | set(range(0x20, 0x100)) - {0x7f})
+    is_binary_string = lambda bytes: bool(bytes.translate(None, textchars))
     for i, log in enumerate(logs):
         item = {}
         item['index'] = log.pk
@@ -184,7 +187,16 @@ def search(requests):
         item['post'] = log.post.strip('[').strip(']')
         item['get'] = log.get.strip('[').strip(']')
         item['response'] = log.response
-        item['file'] = log.file.strip('[').strip(']')
+        if log.file != '[]':
+            file_json = ast.literal_eval(log.file.strip('[').strip(']'))
+            filetype = is_binary_string(base64.b64decode(file_json['content']))
+            item['file'] = {}
+            item['file']['name'] = file_json['name']
+            item['file']['filename'] = file_json['filename']
+            item['file']['content'] = base64.b64decode(file_json['content'])
+            item['file']['type'] = filetype
+        else:
+            item['file'] = None
         item['attacktype'] = log.attacktype.strip('[').strip(']').replace(' ', '').replace("\'", '').split(',')
         item['success'] = log.success
         dicts.append(item)
