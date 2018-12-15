@@ -1,5 +1,6 @@
 from django.db import models
-
+import json
+import base64
 # Create your models here.
 
 
@@ -25,6 +26,13 @@ class Log(models.Model):
         post = self.post
         get = self.get
         method = self.method
+        tmpfiles = json.loads(self.file.replace("\'", "\""))
+        files = []
+        for tmpf in tmpfiles:
+            tmpfile = (tmpf['name'], (tmpf['filename'], base64.b64decode(tmpf['content']), tmpf['type']))
+            files.append(tmpfile)
+        files = str(files)
+
 
         with open("./log/replay", "r") as f:
             script = f.read()
@@ -34,5 +42,6 @@ class Log(models.Model):
         script = script.replace("{data}", post)
         script = script.replace("{params}", get)
         script = script.replace("{method}", method)
+        script = script.replace("{files}", files)
 
         return script

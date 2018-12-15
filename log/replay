@@ -6,7 +6,8 @@ def replay(host):
 
     data = {data}
     params = {params}
-    r = requests.{method}(url, data=data, params=params, headers=headers, timeout=5)
+    files = {files}
+    r = requests.{method}(url, data=data, params=params, headers=headers, files=files, timeout=5)
 
     return r.text
 

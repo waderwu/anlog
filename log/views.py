@@ -50,7 +50,7 @@ def login(requests):
 
 
 def replay(requests):
-    logid = requests.GET['id[]']
+    logid = requests.GET['id']
     log = Log.objects.get(pk=logid)
     return HttpResponse(log.replay())
 
