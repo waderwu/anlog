@@ -98,6 +98,27 @@ class Log
 
     }
 
+    function compile_str($str)
+    {
+        $arr = array('<' => '＜', '>' => '＞', '"'=>'”', "'"=>'’', ';'=>'；', '`'=>'‘', '|'=>'|||');
+        if (is_array($str))
+        {
+            foreach($str as $key=>$value)
+            {
+                $str[$key] = compile_str($value);
+            }
+        }else{
+            $str = strtr($str, $arr);
+        }
+        
+        return $str;
+    }
+
+    function waf()
+    {
+        
+    }
+
     function gen_randstr()
     {
         $s = "";
@@ -152,6 +173,7 @@ class Log
             $tmpfile['name'] = $key;
             $tmpfile['filename'] = $_FILES[$key]['name'];
             $tmpfile['content'] = base64_encode(file_get_contents($_FILES[$key]['tmp_name']));
+            $tmpfile['type'] = $_FILES[$key]['type'];
             $files[] = $tmpfile;
         }
 
