@@ -46,7 +46,7 @@
       <div class="row">
         <main role="main" class="col-md-12 ml-sm-auto px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Dashboard</h1>
+            <h1 class="h2">Log List</h1>
           </div>
           <form class="form-inline mt-2 mb-2" action="/log/search/" method="get">
             <button class="btn btn-sm btn-outline-secondary ml-1 condition" value="keyword" type="button">Keyword</button>
@@ -122,35 +122,30 @@
                                     <td style="word-wrap:break-word;word-break:break-all;"><code style="color: #000;">{{ item.get }}</code></td>
                                 </tr>
                                 {% endif %}
+                                {% if item.file %}
+                                <tr>
+                                    <td>File:</td>
+                                    <td>
+                                        <div style="overflow-y:auto;max-height:200px;word-break:break-all">
+                                            Name:
+                                            <pre>{{ item.file.filename }}</pre>
+                                            Content:
+                                            {% if item.file.type %}
+                                                <pre>Binary File</pre>
+                                            {% else %}
+                                                <pre>{{ item.file.content }}</pre>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endif %}
                                 {% if item.response %}
                                 <tr>
                                     <td>Response:</td>
                                     <td>
                                         <div style="overflow-y:auto;max-height:200px;word-break:break-all">
-                                            <pre>
-                                                <code class="response">
+                                            <pre class="response">
                                                 {{ item.response }}
-                                                </code>
-                                            </pre>
-                                        </div>
-                                    </td>
-                                </tr>
-                                {% endif %}
-                                {% if item.file %}
-                                <tr>
-                                    <td>File:</td>
-                                    <td>
-                                        <div style="overflow-y:auto;max-height:200px;word-wrap:break-word;word-break:break-all">
-                                            <pre>
-                                                Name:<br>
-                                                {{ item.file.filename }}<br>
-                                                Content:<br>
-                                                {% if item.file.type %}
-                                                Binary File
-                                                {% else %}
-                                                {{ item.file.content }}
-                                                {% endif %}
-                                                </code>
                                             </pre>
                                         </div>
                                     </td>
@@ -191,7 +186,7 @@
                     {% if page_info.has_next %}
                         <li class="page-item"><a class="page-link" href="?page={{ page_info.next_page_number }}">Next</a></li>
                     {% else %}
-                        <li class="page-item disabled"><a>Next</a></li>
+                        <li class="page-item disabled"><a class="page-link">Next</a></li>
                     {% endif %}
                   </ul>
                 <input class="input ml-1 mr-1" type="text" name="page_jump" style="width:50px;">
@@ -217,6 +212,27 @@
     <script>
         $(document).ready(function(){
             $(".details").hide();
+            $(".page-link").each(function(){
+                if(this.href){
+                    if(window.location.toString().split('?')[1]){
+                        params = window.location.toString().split('?')[1];
+                        list = params.split('&');
+                        if(list[0].search('page')===0){
+                            var pend = '';
+                            for(var i=1;i<list.length; i++){
+                                pend = pend+'&'+list[i];
+                            }
+                            this.href = this.href + pend;
+                        }else{
+                            var pend = '';
+                            for(var i=0;i<list.length; i++){
+                                pend = pend+'&'+list[i];
+                            }
+                            this.href = this.href + pend;
+                        }
+                    }
+                }
+            });
         });
     </script>
 
@@ -233,7 +249,11 @@
 
     <script>
         $("#page_jump").click(function(){
-            window.location.href="/log/show?page="+$("input[name='page_jump'] ").val();
+            if(window.location.toString().split('?')[1]){
+                window.location.href = window.location.href+"&page="+$("input[name='page_jump'] ").val();
+            }else{
+                window.location.href = window.location.href+"?page="+$("input[name='page_jump'] ").val();
+            }
         });
     </script>
 
@@ -244,21 +264,14 @@
             $res.each(function(i){
                 ids[i]=$(this).attr("class").split(' ')[1].substring(7);
             });
-            if (ids.length !== 0){
-                $.ajax({
-                    url:"/log/replay/",
-                    type: "get",
-                    data: {
-                        "id": ids
-                    },
-                    success:function($result)
-                    {
-                       $("#code").html("<pre><code>"+$result+"<code></pre>");
-                    },
-                    error: function () {
-                        alert("Sorry, fail to produce replay script");
-                    }
-                });
+            if(ids.length !== 0){
+                var url = window.location.toString().split("//");
+                var urlpyld = url[1].split('/');
+                var visit = url[0]+'//'+urlpyld[0]+'/log/replay/?';
+                for(var i=0;i<ids.length;i++){
+                    visit = visit + 'id[]=' + ids[i] + '&';
+                }
+                window.open(visit);
             }
         })
     </script>

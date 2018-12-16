@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Replay Scripts</title>
+    {% load static from staticfiles %}
+    <link href="{% static "styles/prism.css" %}" rel="stylesheet">
+</head>
+<body>
+    {% for script in scripts %}
+    <div>
+        <pre><code class="language-python">{{ script }}</code></pre>
+    </div>
+    {% endfor %}
+    <script src="{% static "scripts/prism.js" %}"></script>
+</body>
+</html>

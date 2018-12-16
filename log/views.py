@@ -50,15 +50,18 @@ def login(requests):
 
 
 def replay(requests):
-    logid = requests.GET['id[]']
-    log = Log.objects.get(pk=logid)
-    return HttpResponse(log.replay())
+    logid = [int(i) for i in requests.GET.getlist('id[]')]
+    logs = Log.objects.filter(pk__in=logid)
+    replays = []
+    for log in logs:
+        replays.append(log.replay())
+    return render(requests, "replay.html", {'scripts': replays})
 
 
 def show(requests):
     log_list = Log.objects.all()
 
-    paginator = Paginator(log_list, 20)
+    paginator = Paginator(log_list.order_by("-attacktime"), 20)
 
     page = requests.GET.get('page')
     try:
@@ -104,7 +107,7 @@ def show(requests):
         item['success'] = log.success
         dicts.append(item)
 
-    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info})
+    return render(requests, "show.html", {'contents': dicts, 'page_info': page_info})
 
 
 def search(requests):
@@ -155,7 +158,7 @@ def search(requests):
             else:
                 log_list = Log.objects.filter(get__iregex=get)
 
-    paginator = Paginator(log_list, 20)
+    paginator = Paginator(log_list.order_by("-attacktime"), 20)
 
     page = requests.GET.get('page')
     try:
@@ -201,7 +204,7 @@ def search(requests):
         item['success'] = log.success
         dicts.append(item)
 
-    return render(requests, "temp.html", {'contents': dicts, 'page_info': page_info})
+    return render(requests, "show.html", {'contents': dicts, 'page_info': page_info})
 
 
 def filter(requests):
