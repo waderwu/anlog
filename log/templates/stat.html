@@ -45,48 +45,37 @@
 
     <div class="container-fluid">
       <div>
-        <main role="main" class="row px-4">
+      {% if statip %}
+      <main role="main" class="row px-4">
 
-            <div id="visit2" class="mt-3 col-md-3  align-top" style="display: inline-block;">
-              <table id="ipvisit" class="table" style="width:100%">
-                <thead>
-                  <tr>
-                      <th>Ip</th>
-                      <th>Visit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for ipcount in ipcounts %}
-                  <tr>
-                      <td>{{ ipcount.attackip }} <a href="/log/search?ip={{ ipcount.attackip }}">search</a> <a href="/log/stat?ip={{ ipcount.attackip }}">stat</a></td>
-                      <td>{{ ipcount.count }}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-          </div>
-
-        <div id="attack3" class="mt-3 col-md-3  align-top" style="display: inline-block;">
+        <div id="attack3" class="mt-3 col-md-12  align-top" style="display: inline-block;">
               <table id="ipattack" class="table" style="width:100%">
                 <thead>
                   <tr>
                       <th>Ip</th>
+                      <th>Visit</th>
                       <th>Attack</th>
+                      <th>Ratio</th>
+                      <th>Success</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for attackcount in attackcounts %}
                   <tr>
-                      <td>{{ attackcount.attackip }} <a href="/log/search?ip={{ attackcount.attackip }}">search</a> <a href="/log/stat?ip={{ attackcount.attackip }}">stat</a></td>
-                      <td>{{ attackcount.count }}</td>
+                      <td>{{ statip.ip }}</td>
+                      <td>{{ statip.visit }}</td>
+                      <td>{{ statip.attack }}</td>
+                      <td>{{ statip.ratio }}</td>
+                      <td>{{ statip.success }}</td>
                   </tr>
-                  {% endfor %}
                 </tbody>
               </table>
           </div>
+        </main>
 
-        <div id="attack4" class="mt-3 col-md-3" style="display: inline-block;">
-              <table id="count" class="table" style="width:100%">
+        <main role="main" class="row px-4">
+
+        <div id="attack3" class="mt-3 col-md-12  align-top" style="display: inline-block;">
+              <table id="ipattack" class="table" style="width:100%">
                 <thead>
                   <tr>
                       <th>Path</th>
@@ -94,35 +83,67 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {% for pathcount in pathcounts %}
+                  {% for path in statip.path %}
                   <tr>
-                      <td>{{ pathcount.path }} <a href="/log/search?path={{ pathcount.path }}">search</a> <a href="/log/stat?path={{ pathcount.path }}">stat</a></td>
-                      <td>{{ pathcount.count }}</td>
+                      <td>{{ path.path }} <a href="/log/search?ip={{ statip.ip }}&path={{ path.path }}">search</a> <a href="/log/stat?path={{ path.path }}">search</a></td>
+                      <td>{{ path.count }}</td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
           </div>
-
-            <div id="visit1" class="mt-3 col-md-3 align-top" style="display: inline-block;">
-                  <table id="ipvisit" class="table" style="width:100%">
-                    <thead>
-                      <tr>
-                          <th>Ip</th>
-                          <th>Visit</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for sucount in sucounts %}
-                      <tr>
-                          <td>{{ sucount.attackip }}<a href="/log/search?suc=&ip={{ sucount.attackip }}">search</a></td>
-                          <td>{{ sucount.count }}</td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-              </div>
         </main>
+        {% endif %}
+
+      {% if statpath %}
+      <main role="main" class="row px-4">
+
+        <div id="attack3" class="mt-3 col-md-12  align-top" style="display: inline-block;">
+              <table id="ipattack" class="table" style="width:100%">
+                <thead>
+                  <tr>
+                      <th>Path</th>
+                      <th>Visit</th>
+                      <th>Attack</th>
+                      <th>Ratio</th>
+                      <th>Success</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                      <td>{{ statpath.path }}</td>
+                      <td>{{ statpath.visit }}</td>
+                      <td>{{ statpath.attack }}</td>
+                      <td>{{ statpath.ratio }}</td>
+                      <td>{{ statpath.success }}</td>
+                  </tr>
+                </tbody>
+              </table>
+          </div>
+        </main>
+
+        <main role="main" class="row px-4">
+
+        <div id="attack3" class="mt-3 col-md-12  align-top" style="display: inline-block;">
+              <table id="ipattack" class="table" style="width:100%">
+                <thead>
+                  <tr>
+                      <th>Path</th>
+                      <th>Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for ip in statpath.ip %}
+                  <tr>
+                      <td>{{ ip.attackip }} <a href="/log/search?ip={{ ip.attackip }}&path={{ statpath.path }}">search</a> <a href="/log/stat?ip={{ ip.attackip }}">stat</a></td>
+                      <td>{{ ip.count }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+        </main>
+        {% endif %}
 
       </div>
     </div>

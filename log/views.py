@@ -125,6 +125,14 @@ def search(requests):
             else:
                 log_list = Log.objects.filter(path__icontains=path)
 
+    if 'attacktype' in requests.GET:
+        if requests.GET['attacktype'] != '':
+            attacktype = requests.GET['attacktype']
+            if log_list != 'filler':
+                log_list = log_list.filter(attacktype__icontains=attacktype)
+            else:
+                log_list = Log.objects.filter(attacktype__icontains=attacktype)
+
     if "method" in requests.GET:
         if requests.GET['method'] != '':
             method = requests.GET['method']
@@ -201,35 +209,29 @@ def search(requests):
 
 
 def statistics(requests):
-    ips = Log.objects.values_list("attackip", flat=True).distinct()
-    #list all different ip
-    for ip in ips:
-        print(ip)
 
+    statip = {}
+    if 'ip' in requests.GET:
+        ip = requests.GET['ip']
+        log_list = Log.objects.filter(attackip=ip)
+        statip['ip'] = ip
+        statip['visit'] = log_list.count()
+        statip['attack'] = log_list.filter(~Q(attacktype='[]')).count()
+        statip['success'] = log_list.filter(success=True).count()
+        statip['ratio'] = statip['attack']/statip['visit']
+        statip['path'] = log_list.values('path').annotate(count=Count('path')).order_by('-count')
+        # debug(statip)
 
-    #ervery ip attack count
-    ipcounts = Log.objects.values('attackip').annotate(count=Count('attackip')).order_by('-count')
-    for ipcount in ipcounts:
-        debug(ipcount)
+    statpath = {}
+    if 'path' in requests.GET:
+        path = requests.GET['path']
+        log_list = Log.objects.filter(path=path)
+        statpath['path'] = path
+        statpath['visit'] = log_list.count()
+        statpath['attack'] = log_list.filter(~Q(attacktype='[]')).count()
+        statpath['ratio'] = statpath['attack']/statpath['visit']
+        statpath['success'] = log_list.filter(success=True).count()
+        statpath['ip'] = log_list.values('attackip').annotate(count=Count('attackip')).order_by('-count')
+        # debug(statpath)
 
-    #every ip attack count
-    attackcounts = Log.objects.filter(~Q(attacktype='[]')).values('attackip').annotate(count=Count('attackip')).order_by('-count')
-
-    for attackcount in attackcounts:
-        debug(attackcount)
-
-    #every ip success attack count
-
-    sucounts = Log.objects.filter(success=True).values('attackip').annotate(count=Count('attackip')).order_by('-count')
-
-    for succount in sucounts:
-        debug(succount)
-
-    #ervery path count
-    pathcounts = Log.objects.values('path').annotate(count=Count('attackip')).order_by('-count')
-    for path in pathcounts:
-        debug(path)
-
-    # print(ipcounts[0].attackip__count)
-
-    return HttpResponse("ok")
+    return render(requests, 'stat.html', {'statip': statip, 'statpath': statpath})
