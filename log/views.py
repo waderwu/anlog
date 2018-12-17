@@ -24,9 +24,9 @@ def index(requests):
 
     pathcounts = Log.objects.values('path').annotate(count=Count('attackip')).order_by('-count')
 
+    sucounts = Log.objects.filter(success=True).values('attackip').annotate(count=Count('attackip')).order_by('-count')
 
-
-    return render(requests, "index.html", {'ipcounts':ipcounts, 'attackcounts': attackcounts, 'pathcounts':pathcounts})
+    return render(requests, "index.html", {'sucounts': sucounts, 'ipcounts': ipcounts, 'attackcounts': attackcounts, 'pathcounts': pathcounts})
 
 
 
@@ -102,6 +102,13 @@ def search(requests):
         keyword = requests.GET['keyword']
         log_list = Log.objects.filter(Q(headers__icontains=keyword)|Q(post__icontains=keyword)|Q(get__icontains=keyword)|Q(response__icontains=keyword))
 
+    if "suc" in requests.GET:
+        if requests.GET['suc'] != '':
+            if log_list != 'filler':
+                log_list = log_list.filter(success=True)
+            else:
+                log_list = Log.objects.filter(success=True)
+
     if "ip" in requests.GET:
         if requests.GET['ip'] != '':
             ip = requests.GET['ip']
@@ -109,6 +116,7 @@ def search(requests):
                 log_list = log_list.filter(attackip=ip)
             else:
                 log_list = Log.objects.filter(attackip=ip)
+
     if 'path' in requests.GET:
         if requests.GET['path'] != '':
             path = requests.GET['path']
