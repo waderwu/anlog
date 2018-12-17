@@ -7,12 +7,7 @@ from .models import Log
 from django.db.models import Count
 from datetime import timedelta
 import base64
-import json
 import ast
-from datetime import datetime
-import pytz
-from datetime import time
-import numpy as np
 
 
 # Create your views here.
@@ -44,9 +39,6 @@ def index(requests):
     return render(requests, "index.html",
                   {'ip_info': ip_info, 'visit_nums': visit_nums, 'min_stamp': min_point})
 
-
-def login(requests):
-    return HttpResponse("hello man")
 
 
 def replay(requests):
@@ -93,16 +85,18 @@ def show(requests):
         item['post'] = log.post.strip('[').strip(']')
         item['get'] = log.get.strip('[').strip(']')
         item['response'] = log.response
-        if log.file != '[]':
-            file_json = ast.literal_eval(log.file.strip('[').strip(']'))
+        item['files'] = []
+        files = ast.literal_eval(log.file)
+        for file_json in files:
+            tmpitem = {}
             filetype = is_binary_string(base64.b64decode(file_json['content']))
-            item['file'] = {}
-            item['file']['name'] = file_json['name']
-            item['file']['filename'] = file_json['filename']
-            item['file']['content'] = base64.b64decode(file_json['content'])
-            item['file']['type'] = filetype
-        else:
-            item['file'] = None
+            tmpitem['name'] = file_json['name']
+            tmpitem['filename'] = file_json['filename']
+            tmpitem['content'] = base64.b64decode(file_json['content'])
+            tmpitem['binary'] = filetype
+            item['files'].append(tmpitem)
+        print(item['files'])
+
         item['attacktype'] = log.attacktype.strip('[').strip(']').replace(' ', '').replace("\'", '').split(',')
         item['success'] = log.success
         dicts.append(item)
@@ -190,16 +184,18 @@ def search(requests):
         item['post'] = log.post.strip('[').strip(']')
         item['get'] = log.get.strip('[').strip(']')
         item['response'] = log.response
-        if log.file != '[]':
-            file_json = ast.literal_eval(log.file.strip('[').strip(']'))
+        item['files'] = []
+        files = ast.literal_eval(log.file)
+        for file_json in files:
+            tmpitem = {}
             filetype = is_binary_string(base64.b64decode(file_json['content']))
-            item['file'] = {}
-            item['file']['name'] = file_json['name']
-            item['file']['filename'] = file_json['filename']
-            item['file']['content'] = base64.b64decode(file_json['content'])
-            item['file']['type'] = filetype
-        else:
-            item['file'] = None
+            tmpitem['name'] = file_json['name']
+            tmpitem['filename'] = file_json['filename']
+            tmpitem['content'] = base64.b64decode(file_json['content'])
+            tmpitem['binary'] = filetype
+            item['files'].append(tmpitem)
+        print(item['files'])
+
         item['attacktype'] = log.attacktype.strip('[').strip(']').replace(' ', '').replace("\'", '').split(',')
         item['success'] = log.success
         dicts.append(item)

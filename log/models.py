@@ -29,6 +29,8 @@ class Log(models.Model):
         tmpfiles = json.loads(self.file.replace("\'", "\""))
         files = []
         for tmpf in tmpfiles:
+            if 'type' not in tmpf:
+                tmpf['type'] = 'text/html'
             tmpfile = (tmpf['name'], (tmpf['filename'], base64.b64decode(tmpf['content']), tmpf['type']))
             files.append(tmpfile)
         files = str(files)
