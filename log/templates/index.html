@@ -46,28 +46,63 @@
     <div class="container-fluid">
       <div class="row">
         <main role="main" class="col-md-12 ml-sm-auto px-4">
-              <canvas class="my-4 col-md-6 float-left" id="myChart" style="display: inline;"></canvas>
-
-            <div id="ipInfo" class="mt-3 col-md-6" style="display: inline-block;">
-              <table id="ipTable" class="display">
+            <div id="visit" class="mt-3 col-md-3" style="display: inline-block;">
+              <table id="ipvisit" class="table" style="width:100%">
                 <thead>
                   <tr>
-                      <th>IP Address</th>
+                      <th>Ip</th>
                       <th>Visit</th>
-                      <th>Attack</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% for key,sub_key  in ip_info.items %}
+                  {% for ipcount in ipcounts %}
                   <tr>
-                      <td>{{ key }}</td>
-                      <td>{{ sub_key.visit_num }}</td>
-                      <td>{{ sub_key.attack_num }}</td>
+                      <td><a href="search?ip={{ ipcount.attackip }}">{{ ipcount.attackip }}</a></td>
+                      <td>{{ ipcount.count }}</td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
           </div>
+
+        <div id="attack" class="mt-3 col-md-3" style="display: inline-block;">
+              <table id="ipattack" class="table" style="width:100%">
+                <thead>
+                  <tr>
+                      <th>Ip</th>
+                      <th>Attack</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for attackcount in attackcounts %}
+                  <tr>
+                      <td><a href="search?ip={{ attackcount.attackip }}">{{ attackcount.attackip }}</a></td>
+                      <td>{{ attackcount.count }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+
+        <div id="attack" class="mt-3 col-md-3" style="display: inline-block;">
+              <table id="ipattack" class="table" style="width:100%">
+                <thead>
+                  <tr>
+                      <th>Path</th>
+                      <th>Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for pathcount in pathcounts %}
+                  <tr>
+                      <td><a href="search?path={{ pathcount.path }}">{{ pathcount.path }}</a></td>
+                      <td>{{ pathcount.count }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+          </div>
+
         </main>
 
       </div>
@@ -77,47 +112,6 @@
     <script src="{% static "scripts/popper.min.js" %}"></script>
     <script src="{% static "scripts/bootstrap.js" %}"></script>
     <script src="{% static "scripts/multiselect.js" %}"></script>
-    <script src="{% static "scripts/jquery.dataTables.min.js" %}"></script>
-{#    <script src="{% static "scripts/dataTables.select.min.js" %}"></script>#}
-{#    <script src="{% static "scripts/dataTables.buttons.min.js" %}"></script>#}
-    <script>
-        $(document).ready(function () {
-            $('#ipTable').DataTable();
-        });
-
-    </script>
-
-    <!-- Graphs -->
-    <script src="{% static "scripts/Chart.min.js" %}"></script>
-    <script>
-      var ctx = document.getElementById("myChart");
-      var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ["{{ min_stamp.10 }}", "{{ min_stamp.9 }}", "{{ min_stamp.8 }}", "{{ min_stamp.7 }}", "{{ min_stamp.6 }}", "{{ min_stamp.5 }}", "{{ min_stamp.4 }}", "{{ min_stamp.3 }}", "{{ min_stamp.2 }}", "{{ min_stamp.1 }}", "{{ min_stamp.0 }}"],
-          datasets: [{
-            data: [{{ visit_nums.10 }}, {{ visit_nums.9 }}, {{ visit_nums.8 }}, {{ visit_nums.7 }}, {{ visit_nums.6 }}, {{ visit_nums.5 }}, {{ visit_nums.4 }}, {{ visit_nums.3 }}, {{ visit_nums.2 }}, {{ visit_nums.1 }}, {{ visit_nums.0 }}],
-            lineTension: 0,
-            backgroundColor: 'transparent',
-            borderColor: '#007bff',
-            borderWidth: 4,
-            pointBackgroundColor: '#007bff'
-          }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: false
-              }
-            }]
-          },
-          legend: {
-            display: false,
-          }
-        }
-      });
-    </script>
 
   </body>
 </html>

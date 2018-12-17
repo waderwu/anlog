@@ -17,31 +17,16 @@ def debug(var):
     print(var)
 
 def index(requests):
-    log_list = Log.objects.all()
+    attackcounts = Log.objects.filter(~Q(attacktype='[]')).values('attackip').annotate(
+        count=Count('attackip')).order_by('-count')
 
-    # IP statistic
-    ip_addrs = set(log_list.values_list("attackip"))
-    ip_info = {}
-    for ip in ip_addrs:
-        ip_info[ip[0]] = {}
-        visited_log = log_list.filter(attackip=ip[0])
-        ip_info[ip[0]]['visit_num'] = len(visited_log)
-        ip_info[ip[0]]['attack_num'] = len(visited_log.exclude(attacktype="[]"))
+    ipcounts = Log.objects.values('attackip').annotate(count=Count('attackip')).order_by('-count')
 
-    # attacking number statistic
-    log_sorted_by_time = log_list.order_by("-attacktime")
-    previous_min = log_sorted_by_time[0].attacktime.replace(second=0)
-    after_min = previous_min + timedelta(minutes=1)
-    visit_nums = []
-    min_point = []
-    for i in range(11):
-        visit_nums.append(len(log_sorted_by_time.filter(attacktime__range=(previous_min, after_min))))
-        min_point.append(str(previous_min))
-        after_min = previous_min
-        previous_min = previous_min - timedelta(minutes=1)
+    pathcounts = Log.objects.values('path').annotate(count=Count('attackip')).order_by('-count')
 
-    return render(requests, "index.html",
-                  {'ip_info': ip_info, 'visit_nums': visit_nums, 'min_stamp': min_point})
+
+
+    return render(requests, "index.html", {'ipcounts':ipcounts, 'attackcounts': attackcounts, 'pathcounts':pathcounts})
 
 
 
@@ -219,8 +204,15 @@ def statistics(requests):
     for ipcount in ipcounts:
         debug(ipcount)
 
-    #every ip attack success count
-    sucounts = Log.objects.filter(~Q(attacktype='[]')).values('attackip').annotate(count=Count('attackip')).order_by('-count')
+    #every ip attack count
+    attackcounts = Log.objects.filter(~Q(attacktype='[]')).values('attackip').annotate(count=Count('attackip')).order_by('-count')
+
+    for attackcount in attackcounts:
+        debug(attackcount)
+
+    #every ip success attack count
+
+    sucounts = Log.objects.filter(success=True).values('attackip').annotate(count=Count('attackip')).order_by('-count')
 
     for succount in sucounts:
         debug(succount)
