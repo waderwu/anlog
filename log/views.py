@@ -12,6 +12,10 @@ import ast
 
 # Create your views here.
 
+def debug(var):
+    print(type(var))
+    print(var)
+
 def index(requests):
     log_list = Log.objects.all()
 
@@ -95,7 +99,7 @@ def show(requests):
             tmpitem['content'] = base64.b64decode(file_json['content'])
             tmpitem['binary'] = filetype
             item['files'].append(tmpitem)
-        print(item['files'])
+        # print(item['files'])
 
         item['attacktype'] = log.attacktype.strip('[').strip(']').replace(' ', '').replace("\'", '').split(',')
         item['success'] = log.success
@@ -194,7 +198,7 @@ def search(requests):
             tmpitem['content'] = base64.b64decode(file_json['content'])
             tmpitem['binary'] = filetype
             item['files'].append(tmpitem)
-        print(item['files'])
+        # print(item['files'])
 
         item['attacktype'] = log.attacktype.strip('[').strip(']').replace(' ', '').replace("\'", '').split(',')
         item['success'] = log.success
@@ -203,37 +207,28 @@ def search(requests):
     return render(requests, "show.html", {'contents': dicts, 'page_info': page_info})
 
 
-def filter(requests):
-    logs = None
-    if 'ip' in requests.GET:
-        ip = requests.GET['ip']
-        logs = Log.objects.filter(attackip=ip)
-    elif "path" in requests.GET:
-        path = requests.GET['path']
-        logs = Log.objects.filter(path__iregex=path)
-
-    retlogs = serializers.serialize("json", logs)
-    return HttpResponse(retlogs, content_type="application/json")
-
-
 def statistics(requests):
     ips = Log.objects.values_list("attackip", flat=True).distinct()
     #list all different ip
     for ip in ips:
         print(ip)
 
-    
 
     #ervery ip attack count
-    ipcounts = Log.objects.values('attackip').annotate(Count('attackip')).order_by()
+    ipcounts = Log.objects.values('attackip').annotate(count=Count('attackip')).order_by('-count')
     for ipcount in ipcounts:
-        print(ipcount)
+        debug(ipcount)
 
     #every ip attack success count
-    sucounts = Log.objects.filter(~Q(attacktype='[]')).values('attackip').annotate(Count('attackip')).order_by()
+    sucounts = Log.objects.filter(~Q(attacktype='[]')).values('attackip').annotate(count=Count('attackip')).order_by('-count')
 
     for succount in sucounts:
-        print(succount)
+        debug(succount)
+
+    #ervery path count
+    pathcounts = Log.objects.values('path').annotate(count=Count('attackip')).order_by('-count')
+    for path in pathcounts:
+        debug(path)
 
     # print(ipcounts[0].attackip__count)
 
