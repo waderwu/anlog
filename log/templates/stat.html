@@ -85,7 +85,7 @@
                 <tbody>
                   {% for path in statip.path %}
                   <tr>
-                      <td>{{ path.path }} <a href="/log/search?ip={{ statip.ip }}&path={{ path.path }}">search</a> <a href="/log/stat?path={{ path.path }}">search</a></td>
+                      <td>{{ path.path }} <a href="/log/search?ip={{ statip.ip }}&path={{ path.path }}">search</a> <a href="/log/stat?path={{ path.path }}">stat</a></td>
                       <td>{{ path.count }}</td>
                   </tr>
                   {% endfor %}
