@@ -115,7 +115,7 @@
                     <tbody>
                       {% for sucount in sucounts %}
                       <tr>
-                          <td>{{ sucount.attackip }}<a href="/log/search?suc=&ip={{ sucount.attackip }}">search</a></td>
+                          <td>{{ sucount.attackip }} <a href="/log/search?suc=&ip={{ sucount.attackip }}">search</a></td>
                           <td>{{ sucount.count }}</td>
                       </tr>
                       {% endfor %}

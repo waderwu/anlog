@@ -1,6 +1,8 @@
 """
 class rule
 """
+import sys
+sys.dont_write_bytecode = True
 
 class Rule:
     def __init__(self, normal, anomaly, regex=None, kindp=0.5):

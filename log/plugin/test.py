@@ -1,4 +1,4 @@
-from attack import Attack
+from .attack import Attack
 import json
 p = Attack()
 
@@ -7,5 +7,5 @@ p = Attack()
 log = '{"file":{"hh":"select from union select"}}'
 log = json.loads(log)
 print(log['file']['hh'])
-# print(p.is_attack())
+# print(p.is_attack(log['file']['hh']))
 

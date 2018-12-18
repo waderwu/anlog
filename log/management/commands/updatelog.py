@@ -6,6 +6,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 from log.models import Log
 from log.plugin.attack import Attack
+import ast
 
 class Command(BaseCommand):
     help = 'update log'
@@ -33,7 +34,7 @@ class Command(BaseCommand):
         url = self.host + "wulogser.php?dir=req"
         r = rq.get(url)
         print(r.text)
-        jsonr = json.loads(r.text)
+        jsonr = r.json()
         print(jsonr)
         attack = Attack()
         for key in jsonr:
@@ -51,6 +52,7 @@ class Command(BaseCommand):
 
             if jlog['get']:
                 for g in jlog['get']:
+                    print("here")
                     kind = attack.is_attack(jlog['get'][g])
                     if kind:
                         attack_type.append(kind)
@@ -65,7 +67,7 @@ class Command(BaseCommand):
     def insertres(self):
         url = self.host + "wulogser.php?dir=res"
         r = rq.get(url)
-        jsonr = json.loads(r.text)
+        jsonr = r.json()
         print("hhh", jsonr)
         print(type(jsonr))
         for key in jsonr:
@@ -80,7 +82,11 @@ class Command(BaseCommand):
             print(log.uid)
             if log:
                 log.response = response
-                log.attack = attack
+                log.success = attack
                 log.save()
+                if attack:
+                    turl = self.host+"wuaddip.php"
+                    data = {"p": "wsniubi", "pass": "ws666", "ip": log.attackip}
+                    rq.post(turl, data=data)
 
-            self.stdout.write(self.style.SUCCESS('Successfully insert res attack type: %s' % attack))
+            self.stdout.write(self.style.SUCCESS('Successfully insert res success: %s' % attack))

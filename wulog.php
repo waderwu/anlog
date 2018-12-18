@@ -1,15 +1,18 @@
 <?php
+$ipblack = file_get_contents("/tmp/ipblack");
+$ipblack = explode("\n", $ipblack);
+array_pop($ipblack);
 
 $config = array(
     #level 1 just log requests
     #level 2 log requests and response and check flag in response
-    #level 3 Intercept requests waf 1
-    #level 4 Intercept requests waf 2
-    #level 5 return static pages
-    #level 6 except ip in ipwhite, others will intercept
-    "level" => 5,
+    #level 3 Intercept requests by waf in ip black 
+    #level 4 forword request to honey jar in ip black
+    #level 5 intercept requests by waf not in ip white  
+    #level 6 forword request to honey jar not in ip white 
+    "level" => 2,
     "ipwhite" => ['127.0.0.1'],
-    "ipblack" => ['172.91.0.137', '172.91.0.29', '172.91.0.76', '172.91.0.109']
+    "ipblack" => $ipblack, 
 );
 
 header("ip:".$_SERVER['REMOTE_ADDR']);
@@ -68,23 +71,33 @@ class Log
         $logjson = json_encode($this->log);
         file_put_contents($this->req.$this->filename, $logjson, FILE_APPEND);
 
-
-        if ($this->config['level'] > 4)
+		
+        if ($this->config['level'] === 3)
         {
             if (in_array($this->ip, $this->config['ipblack']))
             {
-                $this->mydie();
+                $this->waf();
             }
 
         }
 
-        if ($this->config['level'] > 5)
+        if ($this->config['level'] === 4)
         {
-            if (!in_array($this->ip, $this->config['ipwhite']))
+            if (in_array($this->ip, $this->config['ipblack']))
             {
-                $this->mydie();
+                $this->forward($logjson);
             }
 
+        }
+
+        if ($this->config['level'] === 5)
+        {
+            $this->waf();
+        }
+        
+        if ($this->config['level'] === 6)
+        {
+            $this->forward($logjson);
         }
 
 
@@ -100,12 +113,13 @@ class Log
 
     function compile_str($str)
     {
-        $arr = array('<' => '＜', '>' => '＞', '"'=>'”', "'"=>'’', ';'=>'；', '`'=>'‘', '|'=>'|||');
+        $arr = array('<' => '＜', '>' => '＞', '"'=>'”', "'"=>'’', ';'=>'；', '`'=>'‘', '|'=>'|||', '/'=>'、', '.'=>'。', ':'=>'：', '('=>'（', ')'=>'）');
+
         if (is_array($str))
         {
             foreach($str as $key=>$value)
             {
-                $str[$key] = compile_str($value);
+                $str[$key] = $this->compile_str($value);
             }
         }else{
             $str = strtr($str, $arr);
@@ -116,8 +130,21 @@ class Log
 
     function waf()
     {
-        
+		$_GET = $this->compile_str($_GET);
+		$_POST = $this->compile_str($_POST);
+		$_FILES = $this->compile_str($_FILES);
     }
+
+    function forward($req)
+    {
+       $url = "http://127.0.0.1:6767/log/forward/";
+       $req = base64_encode($req);
+       $cmd = "curl $url -d \"req=$req\"";
+       #echo $cmd;
+       $res = shell_exec($cmd);
+       die($res);
+    }
+
 
     function gen_randstr()
     {
@@ -153,7 +180,7 @@ class Log
 
     function get_flag()
     {
-        $flag = file_get_contents("/flag/flag.txt");
+        $flag = file_get_contents("/flag");
         $flag_base64 = base64_encode($flag);
         return "$flag|$flag_base64";
     }
@@ -209,7 +236,7 @@ class Log
         header('HTTP/1.1 503 Service Temporarily Unavailable');
         header('Status: 503 Service Temporarily Unavailable');
         header('Retry-After: 300');
-        $html = file_get_contents("cant.html");
+        $html = file_get_contents("/tmp/cant.html");
         $html = str_replace("{{host}}", $_SERVER['HTTP_HOST'], $html);
         #sleep(30);
         die($html);
@@ -218,3 +245,4 @@ class Log
 
 $log = new Log($config);
 ?>
+
