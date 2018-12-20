@@ -6,6 +6,7 @@ from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 from log.models import Log
 from log.plugin.attack import Attack
+import base64
 import ast
 
 class Command(BaseCommand):
@@ -56,6 +57,16 @@ class Command(BaseCommand):
                     kind = attack.is_attack(jlog['get'][g])
                     if kind:
                         attack_type.append(kind)
+            if jlog['file']:
+                for g in jlog['file']:
+                    # print(g)
+                    try:
+                        kind = attack.is_attack(base64.b64decode(g['content']).decode())
+                        if kind:
+                            attack_type.append(kind)
+                    except Exception as e:
+                        print(e)
+                        print('file is binary')
 
             log = Log(attackip=ip, attacktime=time, method=method, path=jlog['path'], headers=jlog['headers'],
                       post=jlog['post'], get=jlog['get'], uid=jlog['uid'], file=jlog['file'], attacktype=str(attack_type))
